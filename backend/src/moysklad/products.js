@@ -1,11 +1,11 @@
-// src/moysklad/products.js
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const { getToken } = require('./auth');
 
-// Путь к папке с кэшированными данными
-const cacheDirectory = path.join(__dirname, './cache');
+// Определяем базовый путь относительно текущей рабочей директории
+const baseDirectory = __dirname;  // Это возвращает директорию, где находится сам скрипт
+const cacheDirectory = path.join(baseDirectory, 'cache');  // Путь к папке 'cache' в той же директории
 const lastUpdateFilePath = path.join(cacheDirectory, 'lastUpdateProducts.json');
 
 // Проверка существования папки cache и её создание, если не существует
@@ -38,9 +38,9 @@ const shouldUpdateProducts = () => {
 const getProducts = async (token) => {
 	// Закомментировано реальное обращение к API
 	const response = await axios.get('https://api.moysklad.ru/api/remap/1.2/entity/product', {
-	    headers: {
-	        Authorization: `Bearer ${token}`,
-	    },
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
 	});
 	return response.data.rows;
 
@@ -106,6 +106,9 @@ const updateIfNeeded = async () => {
 			// Обновляем файл с временем последнего обновления
 			fs.writeFileSync(lastUpdateFilePath, JSON.stringify({ timestamp: currentTime }), 'utf8');
 			console.log('Продукты успешно обновлены и время последнего обновления сохранено.');
+
+			// Больше не вызываем скрипт convertCacheToJson.js автоматически
+			console.log('Теперь можно вручную запустить скрипт convertCacheToJson.js');
 		} catch (error) {
 			console.error('Ошибка при обновлении продуктов:', error);
 		}
