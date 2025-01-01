@@ -1,7 +1,7 @@
 // src/server.js
 const express = require('express');
 const cors = require('cors');
-const { getCachedProducts, updateProducts } = require('./moysklad/products');
+const { getCachedProducts } = require('./moysklad/products');
 const app = express();
 
 // Разрешаем CORS
@@ -20,17 +20,6 @@ app.get('/api/products', (req, res) => {
 	} catch (error) {
 		console.error('Ошибка при получении кэшированных продуктов:', error);
 		return res.status(500).json({ error: 'Ошибка сервера при получении продуктов.' });
-	}
-});
-
-// Эндпоинт для обновления продуктов
-app.post('/api/update-products', async (req, res) => {
-	try {
-		await updateProducts(); // Обновляем продукты
-		return res.json({ message: 'Продукты обновлены успешно' });
-	} catch (error) {
-		console.error('Ошибка при обновлении продуктов:', error);
-		return res.status(500).json({ error: 'Ошибка сервера при обновлении продуктов.' });
 	}
 });
 
