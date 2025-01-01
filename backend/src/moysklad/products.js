@@ -69,7 +69,7 @@ const writeProductsToFile = (products) => {
 
 // Получение продуктов из кэша
 const getCachedProducts = () => {
-	const filePath = path.join(cacheDirectory, 'product.js');
+	const filePath = path.join(cacheDirectory, 'formatted_products.json');
 	if (fs.existsSync(filePath)) {
 		return require(filePath);
 	} else {

@@ -3,7 +3,10 @@ import './ProductCard.css'; // Подключаем стили
 import AddToCartButton from '../AddToCartButton/AddToCartButton'; // Подключаем компонент кнопки
 
 const ProductCard = ({ product }) => {
-	const productImage = product.image || '/images/products/default-image.jpg'; // Если нет изображения, используем картинку по умолчанию
+	const productImage = product.img || '/images/products/default-image.jpg'; // Если нет изображения, используем картинку по умолчанию
+
+	// Получение цены
+	const price = product.price ? `${product.price} ₽` : 'Цена не указана';
 
 	return (
 		<div className="product-card">
@@ -17,9 +20,7 @@ const ProductCard = ({ product }) => {
 
 			<div className="product-info">
 				<h3 className="product-title">{product.name}</h3>
-				<p className="product-price">
-					{product.salePrices?.[0]?.value ? `${product.salePrices[0].value} ₽` : 'Цена не указана'}
-				</p> {/* Отображаем цену */}
+				<p className="product-price">{price}</p> {/* Отображаем цену */}
 			</div>
 
 			{/* Передаем onAddToCart, а не onClick */}
