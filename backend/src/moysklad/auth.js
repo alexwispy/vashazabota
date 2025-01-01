@@ -11,7 +11,7 @@ const getToken = async () => {
 	try {
 		const response = await axios.post(
 			'https://api.moysklad.ru/api/remap/1.2/security/token',
-			{},
+			{},  // Пустое тело запроса
 			{
 				headers: {
 					Authorization: `Basic ${auth}`,
@@ -20,12 +20,12 @@ const getToken = async () => {
 			}
 		);
 
-		// Проверяем статус ответа и токен
-		if (response.status === 200) {
+		// Статус 200 или 201 с access_token считается успешным
+		if ((response.status === 200 || response.status === 201) && response.data.access_token) {
 			console.log('Токен получен успешно');
 			return response.data.access_token;
 		} else {
-			console.error('Не удалось получить токен. Статус:', response.status);
+			console.error('Не удалось получить токен. Статус:', response.status, 'Ответ:', response.data);
 			return null;
 		}
 	} catch (error) {

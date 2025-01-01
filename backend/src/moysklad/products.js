@@ -2,10 +2,10 @@
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
-const { getToken } = require('../moysklad/auth');
+const { getToken } = require('./auth');
 
 // Путь к папке с кэшированными данными
-const cacheDirectory = path.join(__dirname, '../../cache');
+const cacheDirectory = path.join(__dirname, './cache');
 const lastUpdateFilePath = path.join(cacheDirectory, 'lastUpdateProducts.json');
 
 // Проверка существования папки cache и её создание, если не существует
@@ -37,12 +37,12 @@ const shouldUpdateProducts = () => {
 // Получение продуктов с МойСклад (закомментировано реальное обращение к API)
 const getProducts = async (token) => {
 	// Закомментировано реальное обращение к API
-	// const response = await axios.get('https://api.moysklad.ru/api/remap/1.2/entity/product', {
-	//     headers: {
-	//         Authorization: `Bearer ${token}`,
-	//     },
-	// });
-	// return response.data.rows;
+	const response = await axios.get('https://api.moysklad.ru/api/remap/1.2/entity/product', {
+	    headers: {
+	        Authorization: `Bearer ${token}`,
+	    },
+	});
+	return response.data.rows;
 
 	// Чтение данных из кэшированного файла
 	const filePath = path.join(cacheDirectory, 'product.js');
