@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { getToken } = require('./auth');
 
-const cacheDirectory = path.join(__dirname, '../cache');
+const cacheDirectory = path.join(__dirname, '../../cache');
 
 // Проверка существования папки cache
 if (!fs.existsSync(cacheDirectory)) {

@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 
 // Путь к файлу с временем последнего обновления
-const cacheDirectory = path.join(__dirname, '/cache/');
+const cacheDirectory = path.join(__dirname, '../cache');
 const lastUpdateFilePath = path.join(cacheDirectory, 'lastUpdateProducts.json');
 
 // Разрешаем CORS
