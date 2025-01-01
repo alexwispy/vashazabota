@@ -123,4 +123,5 @@ setInterval(updateIfNeeded, 86400000);
 // Инициализация: проверка и обновление продуктов при запуске
 updateIfNeeded();  // Это можно раскомментировать, если хотите сразу после старта проверку
 
+
 module.exports = { getProducts, writeProductsToFile, getCachedProducts, updateProducts, shouldUpdateProducts, updateIfNeeded };
