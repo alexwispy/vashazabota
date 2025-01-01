@@ -51,12 +51,11 @@ const downloadImage = async (url, id) => {
 // Основная обработка продуктов
 const processProducts = async () => {
 	for (const product of products) {
-		const { id, name, description, pathName, code, barcode, barcodes } = product;
+		const { id, name, description, pathName, code, article, barcode, barcodes } = product;
 		const price = product.salePrices?.[0]?.value / 100 || 0;
 		const brand = product.attributes?.find(attr => attr.name === 'Бренд')?.value || '';
 		const expirationDate = product.attributes?.find(attr => attr.name === 'Срок годности')?.value || '';
 		const applicationMethod = product.attributes?.find(attr => attr.name === 'Способ применения')?.value || '';
-		const volume = product.attributes?.find(attr => attr.name === 'Объем')?.value || '';
 
 		// Переносим весь массив barcodes
 		const barcodesValues = barcodes || [];
@@ -73,15 +72,14 @@ const processProducts = async () => {
 				name,
 				description: description || '',
 				price,
-				article: code || '',
+				article: article || '',  // Артикул теперь из `article`
 				productCategory: pathName || '',
 				brand,
 				expirationDate,
 				applicationMethod,
-				code: code || '',
+				code: code || '',  // Код теперь из `code`
 				barcodes: barcodesValues,  // Переносим весь массив barcodes
 				imageUrl,
-				volume,
 			};
 			formattedProducts.push(newProduct);
 		}
