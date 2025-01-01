@@ -51,12 +51,16 @@ const downloadImage = async (url, id) => {
 // Основная обработка продуктов
 const processProducts = async () => {
 	for (const product of products) {
-		const { id, name, description, pathName, code, barcode } = product;
+		const { id, name, description, pathName, code, barcode, barcodes } = product;
 		const price = product.salePrices?.[0]?.value / 100 || 0;
 		const brand = product.attributes?.find(attr => attr.name === 'Бренд')?.value || '';
 		const expirationDate = product.attributes?.find(attr => attr.name === 'Срок годности')?.value || '';
 		const applicationMethod = product.attributes?.find(attr => attr.name === 'Способ применения')?.value || '';
 		const volume = product.attributes?.find(attr => attr.name === 'Объем')?.value || '';
+
+		// Переносим весь массив barcodes
+		const barcodesValues = barcodes || [];
+
 		const imageUrl = product.images?.[0]?.meta?.href || '';
 
 		// Проверяем, существует ли товар в formatted_products
@@ -75,7 +79,7 @@ const processProducts = async () => {
 				expirationDate,
 				applicationMethod,
 				code: code || '',
-				barcode: barcode || '',
+				barcodes: barcodesValues,  // Переносим весь массив barcodes
 				imageUrl,
 				volume,
 			};
