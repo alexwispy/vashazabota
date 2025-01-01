@@ -1,0 +1,30 @@
+/* AddToCartButton.css */
+
+.add-to-cart-button {
+	background-color: #ff9900;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	width: 100%;
+	font-size: 14px;
+	transition: background-color 0.3s ease;
+	text-align: center;
+}
+
+.add-to-cart-button:hover {
+	background-color: #e68a00;
+}
+
+/* Заглушка для кнопки */
+.add-to-cart-button-placeholder {
+	background-color: #f0f0f0;
+	color: #ddd;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: not-allowed;
+	width: 100%;
+	margin-top: 12px;
+}

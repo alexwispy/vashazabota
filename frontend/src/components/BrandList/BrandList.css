@@ -1,0 +1,50 @@
+/* BrandList.css */
+
+.brand-list {
+	margin: 20px;
+}
+
+.brand-list h2 {
+	margin-bottom: 15px;
+	/* Добавляем отступ после заголовка */
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+}
+
+.brand-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	/* Для адаптивного отображения */
+	gap: 15px;
+}
+
+.brand-card {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+	background-color: #f4f4f9;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	text-align: center;
+	font-size: 16px;
+	font-weight: 600;
+	color: #333;
+	cursor: pointer;
+	/* Делаем карточки кликабельными */
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.brand-card:hover {
+	background-color: #e5e5e5;
+	transform: scale(1.05);
+}
+
+/* Заглушка для кликабельности (при клике не происходит действий) */
+.brand-card:active {
+	background-color: #ddd;
+	/* Замените на другой цвет для активного состояния */
+	transform: scale(1);
+	/* Отключение эффекта увеличения при клике */
+}
