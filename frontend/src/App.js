@@ -13,6 +13,7 @@ import PaymentRules from './components/PaymentRules/PaymentRules'; // Импор
 import ReturnAndExchange from './components/ReturnAndExchange/ReturnAndExchange'; // Импортируем компонент с условиями возврата
 import Cart from './components/Cart/Cart'; // Импортируем компонент корзины
 import ProductDetail from './components/ProductDetails/ProductDetail'; // Импортируем компонент с деталями продукта
+import CheckoutPage from './components/CheckoutPage/CheckoutPage'; // Импортируем компонент страницы оформления заказа
 
 function App() {
 	return (
@@ -28,6 +29,7 @@ function App() {
 				<Route path="/return-and-exchange" element={<ReturnAndExchange />} />
 				<Route path="/cart" element={<Cart />} />
 				<Route path="/products/:id" element={<ProductDetail />} />
+				<Route path="/checkout" element={<CheckoutPage />} /> 
 			</Routes>
 			<Footer />
 		</Router>

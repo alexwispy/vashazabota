@@ -1,8 +1,11 @@
 // src/components/Cart/Cart.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
 import './Cart.css';
 
 function Cart() {
+  const navigate = useNavigate(); // Создаем экземпляр navigate
+
   // Загружаем корзину из локального хранилища
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
@@ -36,6 +39,11 @@ function Cart() {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Обработчик перехода на страницу оформления заказа
+  const handleCheckout = () => {
+    navigate('/checkout'); // Переход на страницу оформления заказа
+  };
+
   return (
     <div className="cart">
       <h2>Корзина</h2>
@@ -66,7 +74,9 @@ function Cart() {
         <p>
           <strong>Итого:</strong> {cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} ₽
         </p>
-        <button className="checkout-button">Оформить заказ</button>
+        <button className="checkout-button" onClick={handleCheckout}>
+          Оформить заказ
+        </button>
       </div>
     </div>
   );
