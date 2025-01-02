@@ -1,0 +1,35 @@
+/* Стили для select */
+.sidebar select {
+	width: 100%;
+	padding: 6px 10px;  /* Уменьшены внутренние отступы */
+	font-size: 14px;    /* Уменьшен размер шрифта */
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #fff;
+	color: #333;
+	outline: none;
+	transition: border-color 0.3s ease;
+ }
+ 
+ /* Стили для select на фокусе */
+ .sidebar select:focus {
+	border-color: #007bff;
+	box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+ }
+ 
+ /* Стили для option внутри select */
+ .sidebar select option {
+	font-size: 14px;    /* Уменьшен размер шрифта */
+	padding: 6px 10px;  /* Уменьшены внутренние отступы */
+	background-color: #fff;
+	color: #333;
+	border: none;
+	cursor: pointer;
+ }
+ 
+ /* Стили для option на фокусе */
+ .sidebar select option:focus {
+	background-color: #007bff;
+	color: #fff;
+ }
+ 
