@@ -64,6 +64,7 @@
 
 .product-detail__add-to-cart {
 	align-self: flex-start;
+	min-width: 200px;  /* Минимальная ширина кнопки */
 }
 
 /* Медиазапрос для мобильных устройств */

@@ -1,5 +1,3 @@
-/* ProductCard.css */
-
 .product-card {
 	border: 1px solid #ddd;
 	border-radius: 8px;
@@ -42,22 +40,34 @@
 	flex-grow: 1;
 }
 
+/* Заголовок товара с фиксированной высотой и ограничением на 2 строки */
 .product-title {
-	font-size: 12px;
+	font-size: 12px; /* Размер шрифта как раньше */
 	font-weight: bold;
 	margin: 8px 0;
 	color: #333;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 2; /* Ограничиваем 2 строки */
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
+	min-height: 40px; /* Устанавливаем минимальную высоту для заголовка */
 }
 
+/* Цена с фиксированной высотой */
 .product-price {
 	font-size: 14px;
 	color: #b12704;
 	margin: 8px 0;
 	text-align: left;
+	min-height: 24px; /* Устанавливаем минимальную высоту для цены */
+}
+
+/* Бренд с более крупным шрифтом и меньшими отступами */
+.product-brand {
+	font-size: 16px; /* Увеличиваем размер шрифта бренда */
+	color: #555;
+	margin: 4px 0; /* Уменьшаем отступы */
+	min-height: 24px; /* Устанавливаем минимальную высоту для бренда */
 }

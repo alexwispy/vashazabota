@@ -1,5 +1,3 @@
-/* AddToCartButton.css */
-
 .add-to-cart-button {
 	background-color: #ff9900;
 	color: #fff;
@@ -9,16 +7,27 @@
 	cursor: pointer;
 	width: 100%;
 	font-size: 14px;
-	transition: background-color 0.3s ease;
+	transition: background-color 0.3s ease, opacity 0.3s ease;
 	text-align: center;
-}
-
-.add-to-cart-button:hover {
+ }
+ 
+ .add-to-cart-button:hover {
 	background-color: #e68a00;
-}
-
-/* Заглушка для кнопки */
-.add-to-cart-button-placeholder {
+ }
+ 
+ /* Когда товар в корзине */
+ .add-to-cart-button.added {
+	background-color: #ff9900;
+	opacity: 0.4; /* Делаем кнопку более тусклой */
+ }
+ 
+ .add-to-cart-button.added:hover {
+	background-color: #e68a00; /* При наведении кнопка немного ярче */
+	opacity: 0.6; /* Увеличиваем яркость на 10% */
+ }
+ 
+ /* Для состояния, когда товар уже в корзине, но пользователь не может нажать */
+ .add-to-cart-button-placeholder {
 	background-color: #f0f0f0;
 	color: #ddd;
 	padding: 10px;
@@ -27,4 +36,5 @@
 	cursor: not-allowed;
 	width: 100%;
 	margin-top: 12px;
-}
+ }
+ 

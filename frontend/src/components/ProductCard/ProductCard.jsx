@@ -1,26 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Добавляем импорт useNavigate
 import './ProductCard.css';
 import AddToCartButton from '../AddToCartButton/AddToCartButton';
 
 const ProductCard = ({ product }) => {
-	const productImage = product.img || '/images/products/default-image.jpg';
-	const price = product.price ? `${product.price} ₽` : 'Цена не указана';
+  const navigate = useNavigate(); // Создаем экземпляр navigate
 
-	return (
-		<div className="product-card">
-			<Link to={`/products/${product.id}`} className="product-image-link">
-				<div className="product-image">
-					<img src={productImage} alt={product.name} className="product-image-img" />
-				</div>
-			</Link>
-			<div className="product-info">
-				<h3 className="product-title">{product.name}</h3>
-				<p className="product-price">{price}</p>
-			</div>
-			<AddToCartButton />
-		</div>
-	);
+  const handleImageClick = () => {
+    navigate(`/products/${product.id}`); // Переход на страницу товара по ID
+  };
+
+  const productImage = product.img || '/images/products/default-image.jpg';
+  const price = product.price ? `${product.price} ₽` : 'Цена не указана';
+
+  return (
+    <div className="product-card">
+      <div className="product-image">
+        <img 
+          src={productImage} 
+          alt={product.name} 
+          className="product-image-img" 
+          onClick={handleImageClick} 
+        />
+      </div>
+      <div className="product-info">
+        <h3 className="product-title">{product.name}</h3>
+        <p className="product-price">{price}</p>
+        <p className="product-brand">{product.brand}</p>
+      </div>
+      {/* Передаем product в AddToCartButton */}
+      <AddToCartButton product={product} />
+    </div>
+  );
 };
 
 export default ProductCard;

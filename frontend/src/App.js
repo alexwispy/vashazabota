@@ -14,8 +14,6 @@ import ReturnAndExchange from './components/ReturnAndExchange/ReturnAndExchange'
 import Cart from './components/Cart/Cart'; // Импортируем компонент корзины
 import ProductDetail from './components/ProductDetails/ProductDetail'; // Импортируем компонент с деталями продукта
 
-
-
 function App() {
 	return (
 		<Router>
