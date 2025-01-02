@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { getCachedProducts } = require('./moysklad/products');
+const getProducts = require('./routes/getProducts');  // Эндпоинт для всех продуктов
+const getProductById = require('./routes/getProductById');  // Эндпоинт для продукта по ID
+const getProductsByBrand = require('./routes/getProductsByBrand');  // Эндпоинт для продуктов по бренду
+const getBrands = require('./routes/getBrands');  // Новый эндпоинт для брендов
+
 const app = express();
 
 // Разрешаем CORS
@@ -8,39 +12,16 @@ app.use(cors());
 app.use(express.json());
 
 // Эндпоинт для получения всех продуктов
-app.get('/api/products', (req, res) => {
-	try {
-		const products = getCachedProducts();
-		if (products.length > 0) {
-			return res.json(products);
-		} else {
-			return res.status(404).json({ error: 'Кэшированные продукты отсутствуют.' });
-		}
-	} catch (error) {
-		console.error('Ошибка при получении кэшированных продуктов:', error);
-		return res.status(500).json({ error: 'Ошибка сервера при получении продуктов.' });
-	}
-});
+app.get('/api/products', getProducts);
 
 // Эндпоинт для получения продукта по ID
-app.get('/api/products/:id', (req, res) => {
-	const { id } = req.params;  // Получаем ID из параметров URL
+app.get('/api/products/:id', getProductById);
 
-	try {
-		const products = getCachedProducts();
-		// Находим продукт по ID
-		const product = products.find(p => p.id === id);
+// Эндпоинт для получения товаров по бренду
+app.get('/api/products/brand/:brand', getProductsByBrand);
 
-		if (product) {
-			return res.json(product);  // Если продукт найден, отправляем его
-		} else {
-			return res.status(404).json({ error: 'Продукт не найден' });  // Продукт не найден
-		}
-	} catch (error) {
-		console.error('Ошибка при получении продукта:', error);
-		return res.status(500).json({ error: 'Ошибка сервера при получении продукта.' });
-	}
-});
+// Эндпоинт для получения всех брендов
+app.get('/api/brands', getBrands);  // Новый маршрут для получения брендов
 
 // Запуск сервера
 const port = 5000;
