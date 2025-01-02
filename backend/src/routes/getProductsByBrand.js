@@ -1,22 +1,26 @@
-// routes/getProductsByBrand.js
-const { getCachedProducts } = require('../moysklad/products');
+const { getCachedProducts } = require('../moysklad/products'); // Получение кэшированных продуктов
 
 const getProductsByBrand = (req, res) => {
 	const { brand } = req.params;  // Получаем бренд из параметров URL
 
 	try {
-		const products = getCachedProducts();
-		// Фильтрация продуктов по бренду
-		const filteredProducts = products.filter(p => p.brand && p.brand.toLowerCase() === brand.toLowerCase());
+		const products = getCachedProducts();  // Получаем кэшированные продукты
+		const filteredProducts = products
+			.filter(p => p.brand === brand)  // Фильтруем продукты по бренду
+			.map(p => ({                    // Форматируем ответ, оставляя только нужные поля
+				name: p.name,
+				price: p.price,
+				image: p.image,               // Предположим, что у продукта есть поле image с URL картинки
+			}));
 
 		if (filteredProducts.length > 0) {
-			return res.json(filteredProducts);  // Отправляем отфильтрованные товары
+			return res.json(filteredProducts);  // Отправляем отфильтрованные данные
 		} else {
-			return res.status(404).json({ error: 'Товары для данного бренда не найдены.' });
+			return res.status(404).json({ error: 'Продукты для этого бренда не найдены.' });
 		}
 	} catch (error) {
-		console.error('Ошибка при получении товаров по бренду:', error);
-		return res.status(500).json({ error: 'Ошибка сервера при получении товаров по бренду.' });
+		console.error('Ошибка при получении продуктов по бренду:', error);
+		return res.status(500).json({ error: 'Ошибка сервера при получении продуктов по бренду.' });
 	}
 };
 

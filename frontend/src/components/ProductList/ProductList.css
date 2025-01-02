@@ -1,7 +1,7 @@
 /* src/components/ProductList/ProductList.css */
-.product-list {
+.catalog-list {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 20px;
+	gap: 10px;
 	justify-content: center;
 }

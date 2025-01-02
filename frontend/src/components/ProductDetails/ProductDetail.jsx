@@ -30,7 +30,7 @@ const ProductDetail = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id]); // Завершаем загрузку данных при изменении ID
 
   if (loading) {
     return <div>Загрузка...</div>;
@@ -49,7 +49,7 @@ const ProductDetail = () => {
     <div className="product-detail">
       <div className="product-detail__image">
         <img
-          src={product.img || '/images/products/default-image.jpg'} // Показываем изображение
+          src={product.img || '/images/products/default-image.jpg'}
           alt={product.name}
           className="product-detail__image-img"
         />
@@ -57,11 +57,10 @@ const ProductDetail = () => {
 
       <div className="product-detail__info">
         <h2 className="product-detail__title">{product.name}</h2>
-        <p className="product-detail__brand">{product.brand}</p> {/* Отображаем бренд */}
+        <p className="product-detail__brand">{product.brand}</p>
         <p className="product-detail__description">{product.description}</p>
-        <p className="product-detail__price">{product.price} ₽</p> {/* Отображаем цену */}
+        <p className="product-detail__price">{product.price} ₽</p>
         
-        {/* Кнопка добавления в корзину */}
         <div className="product-detail__add-to-cart">
           <AddToCartButton product={product} />
         </div>

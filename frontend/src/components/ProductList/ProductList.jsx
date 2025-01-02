@@ -35,7 +35,7 @@ function ProductList() {
 	}
 
 	return (
-		<div className="product-list">
+		<div className="catalog-list">
 			{products.map((product) => (
 				<ProductCard key={product.id} product={product} /> // Используем компонент карточки
 			))}
