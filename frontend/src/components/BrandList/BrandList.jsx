@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './BrandList.css'; // Подключаем стили
-import ProductCard from '../ProductCard/ProductCard'; // Импортируем компонент ProductCard
+import './BrandList.css';
+import ProductCard from '../ProductCard/ProductCard';
+import dataService from '../../services/dataService';
 
 const BrandList = () => {
   const navigate = useNavigate();
@@ -9,17 +10,24 @@ const BrandList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [productsByBrand, setProductsByBrand] = useState({});
 
   useEffect(() => {
-    const fetchBrands = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/brands');
-        if (!response.ok) {
-          throw new Error('Не удалось загрузить бренды');
-        }
-        const data = await response.json();
-        setBrands(data);
+        const fetchedBrands = await dataService.getBrands();
+        setBrands(fetchedBrands);
+
+        const products = await dataService.getProducts();
+        const groupedProducts = products.reduce((acc, product) => {
+          const { brand, id } = product;
+          if (!acc[brand]) {
+            acc[brand] = [];
+          }
+          acc[brand].push({ ...product, key: id }); // Привязываем ключ к id
+          return acc;
+        }, {});
+        setProductsByBrand(groupedProducts);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -27,27 +35,19 @@ const BrandList = () => {
       }
     };
 
-    fetchBrands();
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (selectedBrand) {
-      const fetchProductsByBrand = async () => {
-        try {
-          const response = await fetch(`http://localhost:5000/api/products/brand/${selectedBrand}`);
-          if (!response.ok) {
-            throw new Error('Не удалось загрузить товары для выбранного бренда');
-          }
-          const data = await response.json();
-          setProducts(data);
-        } catch (error) {
-          setError(error.message);
-        }
-      };
-
-      fetchProductsByBrand();
+      console.log(`Выбран бренд: ${selectedBrand}`);
     }
   }, [selectedBrand]);
+
+  const handleCardClick = (productId) => {
+    console.log('Product ID:', productId);
+    navigate(`/products/${productId}`);
+  };
 
   if (loading) {
     return <div>Загрузка...</div>;
@@ -61,23 +61,18 @@ const BrandList = () => {
     return <p>Нет доступных брендов</p>;
   }
 
-  if (selectedBrand && products.length === 0) {
+  if (selectedBrand && (!productsByBrand[selectedBrand] || productsByBrand[selectedBrand].length === 0)) {
     return <p>Товары для выбранного бренда не найдены</p>;
   }
-
-  const handleCardClick = (productId) => {
-    console.log('Product ID:', productId); // Логируем ID
-    navigate(`/products/${productId}`); // Переход на страницу продукта
-  };
 
   return (
     <div className="brand-list">
       <div className="brand-cards">
-        {brands.map((brand, index) => (
+        {brands.map((brand) => (
           <div
-            key={index}
+            key={brand}
             className="brand-card"
-            onClick={() => setSelectedBrand(brand)} // Устанавливаем выбранный бренд при клике
+            onClick={() => setSelectedBrand(brand)}
           >
             {brand}
           </div>
@@ -88,11 +83,11 @@ const BrandList = () => {
         <div>
           <h2>Товары бренда {selectedBrand}</h2>
           <div className="product-list">
-            {products.map((product) => (
+            {(productsByBrand[selectedBrand] || []).map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
-                onCardClick={handleCardClick} // Передаем обработчик клика
+                onCardClick={handleCardClick}
               />
             ))}
           </div>
