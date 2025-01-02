@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // И
 import './index.css';	// Подключаем обнуление стилей
 import Header from './components/Header/Header'; // Импортируем компонент шапки
 import Footer from './components/Footer/Footer'; // Импортируем компонент футера
-import ProductList from './components/ProductList/ProductList'; // Импортируем компонент с продуктами
+import ProductList from './components/Catalog/Catalog'; // Импортируем компонент с продуктами
 import Contact from './components/Contact/Contact';
 import BrandList from './components/BrandList/BrandList'; // Импортируем каталог с брендами
 import HomePage from './components/HomePage/HomePage'; // Импортируем компонент главной страницы

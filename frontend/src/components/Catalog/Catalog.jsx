@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './ProductList.css';
+import './Catalog.css';
 import ProductCard from '../ProductCard/ProductCard.jsx';
-import dataService from '../../services/dataService'; // Импортируем наш dataService
+import dataService from '../../services/dataService.js'; // Импортируем наш dataService
 
 function ProductList() {
 	const [products, setProducts] = useState([]); // Состояние для хранения данных продуктов
