@@ -26,8 +26,6 @@ const fetchProductByIdFromServer = async (id) => {
 	}
 };
 
-
-
 const fetchBrandsFromServer = async () => {
 	try {
 		const response = await fetch('http://localhost:5000/api/brands');
@@ -56,6 +54,22 @@ const fetchProductsByBrandFromServer = async (brand) => {
 	}
 };
 
+// Новый метод для получения категорий
+const fetchCategoriesFromServer = async () => {
+	try {
+		const response = await fetch('http://localhost:5000/api/categories');
+		if (!response.ok) {
+			throw new Error('Ошибка при получении категорий с сервера');
+		}
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error('Ошибка при получении категорий с сервера:', error);
+		return [];
+	}
+};
+
+// Обработчики для получения данных с сервера
 const getProducts = async () => {
 	return await fetchProductsFromServer();
 };
@@ -63,7 +77,6 @@ const getProducts = async () => {
 const getProductById = async (id) => {
 	return await fetchProductByIdFromServer(id);
 };
-
 
 const getBrands = async () => {
 	return await fetchBrandsFromServer();
@@ -73,11 +86,18 @@ const getProductsByBrand = async (brand) => {
 	return await fetchProductsByBrandFromServer(brand);
 };
 
+// Новый метод для получения категорий
+const getCategories = async () => {
+	return await fetchCategoriesFromServer();
+};
+
+// Экспортируем сервис
 const dataService = {
 	getProducts,
+	getProductById,
 	getBrands,
 	getProductsByBrand,
-	getProductById,
+	getCategories,  // Добавили метод для получения категорий
 };
 
 export default dataService;

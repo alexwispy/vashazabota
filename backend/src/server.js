@@ -4,6 +4,7 @@ const getProducts = require('./routes/getProducts');  // Эндпоинт для
 const getProductById = require('./routes/getProductById');  // Эндпоинт для продукта по ID
 const getProductsByBrand = require('./routes/getProductsByBrand');  // Эндпоинт для продуктов по бренду
 const getBrands = require('./routes/getBrands');  // Новый эндпоинт для брендов
+const getCategories = require('./routes/getCategories');  // Новый эндпоинт для категорий
 
 const app = express();
 
@@ -21,7 +22,10 @@ app.get('/api/products/:id', getProductById);
 app.get('/api/products/brand/:brand', getProductsByBrand);
 
 // Эндпоинт для получения всех брендов
-app.get('/api/brands', getBrands);  // Новый маршрут для получения брендов
+app.get('/api/brands', getBrands);
+
+// Эндпоинт для получения категорий
+app.get('/api/categories', getCategories);  // Новый маршрут для получения категорий
 
 // Запуск сервера
 const port = 5000;

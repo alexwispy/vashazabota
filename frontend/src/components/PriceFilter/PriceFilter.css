@@ -1,0 +1,44 @@
+/* Уникальные стили для PriceFilter */
+.price-filter {
+	padding: 20px;
+	background-color: #f9f9f9;
+}
+
+.price-item {
+	cursor: pointer;
+	/* Указатель на кликабельный элемент */
+	padding: 10px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	margin-bottom: 5px;
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.price-item:hover {
+	background-color: #eaeaea;
+}
+
+.toggle-symbol {
+	font-size: 18px;
+}
+
+.price-inputs {
+	padding-left: 20px;
+	margin-top: 10px;
+	display: none;
+}
+
+.price-inputs.open {
+	display: block;
+}
+
+.price-inputs input {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}

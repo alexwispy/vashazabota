@@ -1,0 +1,18 @@
+/* SortFilter Styles */
+.sort-filter {
+	padding: 15px;
+	background-color: #f9f9f9;
+	border-radius: 5px;
+}
+
+.sort-filter h4 {
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+
+.sort-filter select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}

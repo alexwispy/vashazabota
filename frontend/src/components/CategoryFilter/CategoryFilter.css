@@ -1,0 +1,60 @@
+/* Уникальные стили для CategoryFilter */
+.category-filter {
+	padding: 20px;
+	background-color: #f9f9f9;
+}
+
+.category-filter h4 {
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+
+.category-filter .category-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.category-filter .category-item {
+	cursor: pointer;
+	/* Установить курсор в виде пальца */
+	padding: 10px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	margin-bottom: 5px;
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.category-filter .category-item:hover {
+	background-color: #eaeaea;
+}
+
+.category-filter .subcategories {
+	padding-left: 20px;
+	display: none;
+}
+
+.category-filter .subcategories.open {
+	display: block;
+}
+
+.category-filter .toggle-symbol {
+	font-size: 18px;
+}
+
+.category-filter .subcategory-item {
+	cursor: pointer;
+	/* Установить курсор в виде пальца для дочернего элемента */
+	padding: 8px;
+	background-color: #f7f7f7;
+	border: 1px solid #ddd;
+	margin-bottom: 5px;
+	border-radius: 5px;
+}
+
+.category-filter .subcategory-item:hover {
+	background-color: #e1e1e1;
+}
