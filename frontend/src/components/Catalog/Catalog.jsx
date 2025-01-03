@@ -114,7 +114,24 @@ function ProductList() {
 			<div className="product-list">
 				{filteredProducts.length > 0 ? (
 					filteredProducts.map((product) => (
-						<ProductCard key={product.id} product={product} />
+						<ProductCard
+							key={product.id}
+							product={{
+								id: product.id,
+								name: product.name,
+								price: product.price,
+								salePrice: product.salePrice,
+								article: product.article,
+								productCategory: product.productCategory,
+								brand: product.brand,
+								expirationDate: product.expirationDate,
+								applicationMethod: product.applicationMethod,
+								code: product.code,
+								barcodes: product.barcodes,
+								img: product.img,
+								quantity: product.quantity
+							}} // Передаем все необходимые данные в ProductCard
+						/>
 					))
 				) : (
 					<p>Нет товаров для выбранных фильтров</p>

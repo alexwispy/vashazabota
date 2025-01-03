@@ -37,41 +37,37 @@ const shouldUpdateProducts = () => {
 // Получение продуктов с МойСклад (закомментировано реальное обращение к API)
 const getProducts = async (token) => {
 	// Закомментировано реальное обращение к API
-	const response = await axios.get('https://api.moysklad.ru/api/remap/1.2/entity/product', {
+	const response = await axios.get('https://api.moysklad.ru/api/remap/1.2/entity/assortment', {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
 	});
 	return response.data.rows;
 
-	// Чтение данных из кэшированного файла
-	const filePath = path.join(cacheDirectory, 'product.js');
+	// Чтение данных из кэшированного файла (в формате JSON)
+	const filePath = path.join(cacheDirectory, 'product.json');
 	if (fs.existsSync(filePath)) {
-		return require(filePath);  // Возвращаем данные из кэша
+		const data = fs.readFileSync(filePath, 'utf8');
+		return JSON.parse(data);  // Возвращаем данные из кэша
 	} else {
 		console.log('Нет кэшированных данных.');
 		return [];
 	}
 };
 
-// Запись продуктов в файл
+// Запись продуктов в JSON файл
 const writeProductsToFile = (products) => {
-	const filePath = path.join(cacheDirectory, 'product.js');
-	const content = `module.exports = ${JSON.stringify(products, null, 2)};`;
-	fs.writeFile(filePath, content, 'utf8', (err) => {
-		if (err) {
-			console.error('Ошибка при записи данных в файл:', err);
-		} else {
-			console.log('Продукты успешно записаны в файл product.js');
-		}
-	});
+	const filePath = path.join(cacheDirectory, 'product.json');
+	fs.writeFileSync(filePath, JSON.stringify(products, null, 2), 'utf8');
+	console.log('Продукты успешно записаны в файл product.json');
 };
 
-// Получение продуктов из кэша
+// Получение продуктов из кэша (формат JSON)
 const getCachedProducts = () => {
 	const filePath = path.join(cacheDirectory, 'formatted_products.json');
 	if (fs.existsSync(filePath)) {
-		return require(filePath);
+		const data = fs.readFileSync(filePath, 'utf8');
+		return JSON.parse(data);
 	} else {
 		console.log('Нет кэшированных данных.');
 		return [];
@@ -106,9 +102,6 @@ const updateIfNeeded = async () => {
 			// Обновляем файл с временем последнего обновления
 			fs.writeFileSync(lastUpdateFilePath, JSON.stringify({ timestamp: currentTime }), 'utf8');
 			console.log('Продукты успешно обновлены и время последнего обновления сохранено.');
-
-			// Больше не вызываем скрипт convertCacheToJson.js автоматически
-			console.log('Теперь можно вручную запустить скрипт convertCacheToJson.js');
 		} catch (error) {
 			console.error('Ошибка при обновлении продуктов:', error);
 		}
