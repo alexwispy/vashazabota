@@ -1,144 +1,113 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './Catalog.css';
 import ProductCard from '../ProductCard/ProductCard.jsx';
-import Sidebar from '../../components/Sidebar/Sidebar'; // Импортируем Sidebar
-import dataService from '../../services/dataService.js'; // Импортируем dataService
+import Sidebar from '../../components/Sidebar/Sidebar';
+import dataService from '../../services/dataService.js';
 
 function ProductList() {
-	const [products, setProducts] = useState([]); // Состояние для хранения данных продуктов
-	const [filteredProducts, setFilteredProducts] = useState([]); // Отфильтрованные продукты
-	const [categories, setCategories] = useState([]); // Состояние для категорий
-	const [loading, setLoading] = useState(true); // Состояние для загрузки
-	const [error, setError] = useState(null); // Состояние для ошибок
-	const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория
-	const [minPrice, setMinPrice] = useState(0); // Минимальная цена
-	const [maxPrice, setMaxPrice] = useState(1000); // Максимальная цена
-	const [sortOption, setSortOption] = useState('default'); // Опция сортировки (по цене или наименованию)
+  const [products, setProducts] = useState([]); // Состояние для хранения данных продуктов
+  const [categories, setCategories] = useState([]); // Состояние для категорий
+  const [loading, setLoading] = useState(true); // Состояние для загрузки
+  const [error, setError] = useState(null); // Состояние для ошибок
+  const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория
+  const [minPrice, setMinPrice] = useState(0); // Минимальная цена
+  const [maxPrice, setMaxPrice] = useState(1000); // Максимальная цена
+  const [sortOption, setSortOption] = useState('default'); // Опция сортировки
 
-	// Функция для получения продуктов с сервера
-	const fetchProducts = useCallback(async () => {
-		try {
-			const productsData = await dataService.getProducts();
-			setProducts(productsData);
-			setFilteredProducts(productsData);
+  // Функция для получения данных продуктов и категорий
+  const fetchData = async () => {
+    try {
+      const productsData = await dataService.getProducts();
+      const categoriesData = await dataService.getCategories();
 
-			// Определяем минимальную и максимальную цену из данных продуктов
-			const prices = productsData.map(product => product.price);
-			setMinPrice(Math.min(...prices));
-			setMaxPrice(Math.max(...prices));
+      setProducts(productsData);
+      setCategories(categoriesData);
 
-			setLoading(false);
-		} catch (error) {
-			console.error('Ошибка при получении данных:', error);
-			setError('Не удалось загрузить продукты. Попробуйте снова позже.');
-			setLoading(false);
-		}
-	}, []);
+      // Определяем минимальную и максимальную цену из данных продуктов
+      const prices = productsData.map(product => product.price);
+      setMinPrice(Math.min(...prices));
+      setMaxPrice(Math.max(...prices));
 
-	// Функция для получения категорий
-	const fetchCategories = async () => {
-		try {
-			const categoriesData = await dataService.getCategories();
-			setCategories(categoriesData);
-		} catch (error) {
-			console.error('Ошибка при получении категорий:', error);
-		}
-	};
+      setLoading(false);
+    } catch (error) {
+      console.error('Ошибка при получении данных:', error);
+      setError('Не удалось загрузить данные. Попробуйте снова позже.');
+      setLoading(false);
+    }
+  };
 
-	// Функция для изменения цен
-	const handlePriceChange = (newMinPrice, newMaxPrice) => {
-		setMinPrice(newMinPrice);
-		setMaxPrice(newMaxPrice);
-	};
+  useEffect(() => {
+    fetchData();
+  }, []); // Загружаем данные один раз при монтировании компонента
 
-	// Функция для обработки сортировки
-	const handleSortChange = (sortOrder) => {
-		setSortOption(sortOrder);
-	};
+  // Фильтрация и сортировка продуктов
+  const filteredProducts = useMemo(() => {
+    let filtered = products;
 
-	// Загружаем все данные при монтировании компонента
-	useEffect(() => {
-		fetchProducts();
-		fetchCategories();
-	}, [fetchProducts]);
+    if (selectedCategory) {
+      filtered = filtered.filter(product =>
+        Array.isArray(product.productCategory)
+          ? product.productCategory.includes(selectedCategory)
+          : product.productCategory === selectedCategory
+      );
+    }
 
-	// Фильтруем и сортируем продукты
-	useEffect(() => {
-		let filteredProducts = products;
+    // Фильтрация по цене
+    filtered = filtered.filter(product => product.price >= minPrice && product.price <= maxPrice);
 
-		if (selectedCategory) {
-			filteredProducts = filteredProducts.filter(product =>
-				Array.isArray(product.productCategory)
-					? product.productCategory.includes(selectedCategory)
-					: product.productCategory === selectedCategory
-			);
-		}
+    // Сортировка
+    if (sortOption === 'asc-price') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'desc-price') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOption === 'asc-name') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === 'desc-name') {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+    }
 
-		// Фильтрация по цене
-		filteredProducts = filteredProducts.filter(product =>
-			product.price >= minPrice && product.price <= maxPrice
-		);
+    // Перемещаем товары с количеством меньше 1 в конец списка
+    filtered.sort((a, b) => {
+      if (a.quantity < 1 && b.quantity >= 1) return 1;
+      if (a.quantity >= 1 && b.quantity < 1) return -1;
+      return 0;
+    });
 
-		// Сортировка
-		if (sortOption === 'asc-price') {
-			filteredProducts.sort((a, b) => a.price - b.price);
-		} else if (sortOption === 'desc-price') {
-			filteredProducts.sort((a, b) => b.price - a.price);
-		} else if (sortOption === 'asc-name') {
-			filteredProducts.sort((a, b) => a.name.localeCompare(b.name)); // Сортировка по возрастанию
-		} else if (sortOption === 'desc-name') {
-			filteredProducts.sort((a, b) => b.name.localeCompare(a.name)); // Сортировка по убыванию
-		}
+    return filtered;
+  }, [products, selectedCategory, minPrice, maxPrice, sortOption]);
 
-		setFilteredProducts([...filteredProducts]); // Обновляем отображаемые продукты, клонируем для избежания мутации
-	}, [selectedCategory, minPrice, maxPrice, products, sortOption]);
+  if (loading) {
+    return <p>Загрузка...</p>;
+  }
 
-	if (loading) {
-		return <p>Загрузка...</p>;
-	}
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-	if (error) {
-		return <p>{error}</p>;
-	}
-
-	return (
-		<div className="catalog-container">
-			<Sidebar
-				categories={categories}
-				onCategorySelect={setSelectedCategory}
-				minPrice={minPrice}
-				maxPrice={maxPrice}
-				onPriceChange={handlePriceChange}
-				onSortChange={handleSortChange}
-			/>
-			<div className="product-list">
-				{filteredProducts.length > 0 ? (
-					filteredProducts.map((product) => (
-						<ProductCard
-							key={product.id}
-							product={{
-								id: product.id,
-								name: product.name,
-								price: product.price,
-								salePrice: product.salePrice,
-								article: product.article,
-								productCategory: product.productCategory,
-								brand: product.brand,
-								expirationDate: product.expirationDate,
-								applicationMethod: product.applicationMethod,
-								code: product.code,
-								barcodes: product.barcodes,
-								img: product.img,
-								quantity: product.quantity
-							}} // Передаем все необходимые данные в ProductCard
-						/>
-					))
-				) : (
-					<p>Нет товаров для выбранных фильтров</p>
-				)}
-			</div>
-		</div>
-	);
+  return (
+    <div className="catalog-container">
+      <Sidebar
+        categories={categories}
+        onCategorySelect={setSelectedCategory}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        onPriceChange={(newMin, newMax) => {
+          setMinPrice(newMin);
+          setMaxPrice(newMax);
+        }}
+        onSortChange={setSortOption}
+      />
+      <div className="product-list">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        ) : (
+          <p>Нет товаров для выбранных фильтров</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default ProductList;

@@ -41,4 +41,14 @@
 	margin-bottom: 10px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
+	background-color: #FFFFFF; /* Белый фон для полей ввода */
+}
+
+.price-inputs input:focus {
+	border-color: #4CAF50; /* Зеленая граница при фокусе */
+	box-shadow: 0 0 5px rgba(76, 175, 80, 0.2); /* Легкое свечение при фокусе */
+}
+
+.price-inputs input::placeholder {
+	color: #888; /* Цвет для текста в placeholder */
 }

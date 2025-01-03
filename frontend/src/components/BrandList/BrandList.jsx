@@ -49,6 +49,15 @@ const BrandList = () => {
     navigate(`/products/${productId}`);
   };
 
+  // Сортировка товаров: перемещаем товары с количеством меньше 1 в конец
+  const sortedProducts = selectedBrand
+    ? productsByBrand[selectedBrand]?.sort((a, b) => {
+        if (a.quantity < 1 && b.quantity >= 1) return 1;
+        if (a.quantity >= 1 && b.quantity < 1) return -1;
+        return 0;
+      })
+    : [];
+
   if (loading) {
     return <div>Загрузка...</div>;
   }
@@ -83,7 +92,7 @@ const BrandList = () => {
         <div>
           <h2>Товары бренда {selectedBrand}</h2>
           <div className="product-list">
-            {(productsByBrand[selectedBrand] || []).map((product) => (
+            {(sortedProducts || []).map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}

@@ -1,4 +1,3 @@
-// src/components/Cart/Cart.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
 import './Cart.css';
@@ -16,22 +15,28 @@ function Cart() {
   const removeItem = (id) => {
     const updatedCart = cartItems.filter(item => item.id !== id);
     setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
   };
 
-  // Функция для увеличения количества товара
+  // Функция для увеличения количества товара в корзине
   const increaseQuantity = (id) => {
-    const updatedCart = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
+    const updatedCart = cartItems.map(item => {
+      if (item.id === id && item.orderQuantity < item.quantity) {
+        return { ...item, orderQuantity: item.orderQuantity + 1 }; // Увеличиваем только если orderQuantity меньше quantity
+      }
+      return item;
+    });
     setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
   };
 
-  // Функция для уменьшения количества товара
+  // Функция для уменьшения количества товара в корзине
   const decreaseQuantity = (id) => {
-    const updatedCart = cartItems.map(item =>
-      item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+    const updatedCart = cartItems.map(item => 
+      item.id === id && item.orderQuantity > 1 ? { ...item, orderQuantity: item.orderQuantity - 1 } : item
     );
     setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
   };
 
   // Обновляем локальное хранилище каждый раз, когда cartItems изменяется
@@ -58,10 +63,21 @@ function Cart() {
               <div className="cart-item-details">
                 <p className="cart-item-name">{item.name}</p>
                 <p className="cart-item-price">{item.price} ₽</p>
-                <p className="cart-item-quantity">Количество: {item.quantity}</p>
+                <p className="cart-item-quantity">Количество: {item.orderQuantity}</p>
                 <div className="quantity-controls">
-                  <button onClick={() => decreaseQuantity(item.id)} className="quantity-button">-</button>
-                  <button onClick={() => increaseQuantity(item.id)} className="quantity-button">+</button>
+                  <button 
+                    onClick={() => decreaseQuantity(item.id)} 
+                    className="quantity-button"
+                  >
+                    -
+                  </button>
+                  <button 
+                    onClick={() => increaseQuantity(item.id)} 
+                    className="quantity-button"
+                    disabled={item.orderQuantity >= item.quantity} // Отключаем кнопку, если orderQuantity >= quantity
+                  >
+                    +
+                  </button>
                 </div>
               </div>
               <button className="remove-item-button" onClick={() => removeItem(item.id)}>Удалить</button>
@@ -72,7 +88,7 @@ function Cart() {
 
       <div className="cart-summary">
         <p>
-          <strong>Итого:</strong> {cartItems.reduce((total, item) => total + item.price * item.quantity, 0)} ₽
+          <strong>Итого:</strong> {cartItems.reduce((total, item) => total + item.price * item.orderQuantity, 0)} ₽
         </p>
         <button className="checkout-button" onClick={handleCheckout}>
           Оформить заказ
