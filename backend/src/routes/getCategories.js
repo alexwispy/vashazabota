@@ -1,5 +1,5 @@
-// Получаем кэшированные продукты
-const { getCachedProducts } = require('../moysklad/products');
+// Импортируем функцию для получения кэшированных продуктов из правильного пути
+const getCachedProducts = require('./getCachedProducts');  // Исправляем путь
 
 const getCategories = (req, res) => {
 	try {

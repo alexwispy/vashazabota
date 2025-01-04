@@ -1,8 +1,9 @@
-const { getCachedProducts } = require('../moysklad/products');  // Импортируем getCachedProducts
+const getCachedProducts = require('./getCachedProducts');  // Импортируем getCachedProducts
 
 const getBrands = (req, res) => {
 	try {
 		const products = getCachedProducts();  // Получаем кэшированные продукты
+
 		// Извлекаем уникальные бренды и фильтруем пустые или undefined значения
 		const brands = [...new Set(products.map(p => p.brand).filter(brand => brand && brand.trim() !== ''))];
 

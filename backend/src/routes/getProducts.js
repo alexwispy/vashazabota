@@ -1,5 +1,5 @@
 // routes/getProducts.js
-const { getCachedProducts } = require('../moysklad/products');
+const getCachedProducts = require('./getCachedProducts');  // Исправленный путь
 
 const getProducts = (req, res) => {
 	try {

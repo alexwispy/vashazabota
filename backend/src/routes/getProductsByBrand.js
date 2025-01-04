@@ -1,16 +1,18 @@
-const { getCachedProducts } = require('../moysklad/products'); // Получение кэшированных продуктов
+const getCachedProducts = require('./getCachedProducts');  // Получение кэшированных продуктов
 
 const getProductsByBrand = (req, res) => {
 	const { brand } = req.params;  // Получаем бренд из параметров URL
 
 	try {
 		const products = getCachedProducts();  // Получаем кэшированные продукты
+
+		// Фильтруем продукты по бренду и проверяем, чтобы поле brand было валидным
 		const filteredProducts = products
-			.filter(p => p.brand === brand)  // Фильтруем продукты по бренду
-			.map(p => ({                    // Форматируем ответ, оставляя только нужные поля
+			.filter(p => p.brand && p.brand === brand)  // Фильтруем продукты по бренду
+			.map(p => ({  // Форматируем ответ, оставляя только нужные поля
 				name: p.name,
 				price: p.price,
-				image: p.image,               // Предположим, что у продукта есть поле image с URL картинки
+				image: p.image,  // Предположим, что у продукта есть поле image с URL картинки
 			}));
 
 		if (filteredProducts.length > 0) {

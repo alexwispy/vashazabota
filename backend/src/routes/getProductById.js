@@ -1,5 +1,5 @@
 // routes/getProductById.js
-const { getCachedProducts } = require('../moysklad/products');
+const getCachedProducts = require('./getCachedProducts');  // Исправленный путь
 
 const getProductById = (req, res) => {
 	const { id } = req.params;  // Получаем ID из параметров URL
