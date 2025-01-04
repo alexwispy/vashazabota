@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate для перехода на страницу корзины
 import './AddToCartButton.css';
 
-const AddToCartButton = ({ product }) => {
+const AddToCartButton = ({ product, image }) => {  // Добавляем image как пропс
   const navigate = useNavigate(); // Создаем экземпляр navigate
   const [isInCart, setIsInCart] = useState(false);
   const [orderQuantity, setOrderQuantity] = useState(0);
@@ -32,7 +32,7 @@ const AddToCartButton = ({ product }) => {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.img || '/images/products/default-image.jpg',
+      image: image || '/images/products/default-image.webp', // Используем переданное изображение
       quantity: product.quantity, // Общее количество товара
       orderQuantity: 1, // Начальное количество товара в корзине
     };

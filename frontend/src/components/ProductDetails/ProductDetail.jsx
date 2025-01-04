@@ -1,90 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // Для получения параметра ID из URL
+import React from 'react';
+import { useLocation } from 'react-router-dom'; // Для получения состояния
 import AddToCartButton from '../AddToCartButton/AddToCartButton'; // Подключаем компонент кнопки
 import './ProductDetail.css'; // Стили для карточки товара
-import dataService from '../../services/dataService'; // Импортируем dataService
 
 const ProductDetail = () => {
-	const { id } = useParams(); // Получаем ID продукта из URL
-	const [product, setProduct] = useState(null); // Состояние для хранения продукта
-	const [loading, setLoading] = useState(true); // Состояние для загрузки
-	const [error, setError] = useState(null); // Состояние для ошибок
+  const location = useLocation(); // Получаем location, чтобы получить данные, переданные через state
+  const product = location.state?.product; // Извлекаем продукт из state
+  const imageSrc = location.state?.image; // Получаем imageSrc из state, который передаем через AddToCartButton
 
-	// Запрос данных о продукте по ID
-	useEffect(() => {
-		const fetchProduct = async () => {
-			setLoading(true);
-			setError(null);
+  // Если продукт не передан через пропсы
+  if (!product) {
+    return <div>Продукт не найден</div>;
+  }
 
-			try {
-				const data = await dataService.getProductById(id); // Используем dataService для получения данных
-				if (!data) {
-					throw new Error('Продукт не найден');
-				}
-				setProduct(data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
+  const productImage = imageSrc || '/images/products/default-image.jpg'; // Используем картинку из пропсов или дефолтную
 
-		fetchProduct();
-	}, [id]); // Завершаем загрузку данных при изменении ID
+  const price = product.price ? `${product.price} ₽` : 'Цена не указана';
 
-	if (loading) {
-		return <div>Загрузка...</div>;
-	}
+  return (
+    <div className="product-detail">
+      <div className="product-detail__image">
+        <img
+          src={productImage}  // Используем картинку из пропсов
+          alt={product.name}
+          className="product-detail__image-img"
+        />
+      </div>
 
-	if (error) {
-		return <div>{error}</div>;
-	}
+      <div className="product-detail__info">
+        <h2 className="product-detail__title">{product.name}</h2>
+        <p className="product-detail__brand">{product.brand}</p>
 
-	if (!product) {
-		return <div>Продукт не найден</div>;
-	}
+        {/* Описание продукта */}
+        <div className="product-detail__section">
+          <h3>Описание</h3>
+          <p>{product.description || 'Описание отсутствует'}</p>
+        </div>
 
-	// Отображаем карточку товара
-	return (
-		<div className="product-detail">
-			<div className="product-detail__image">
-				<img
-					src={product.img || '/images/products/default-image.jpg'}
-					alt={product.name}
-					className="product-detail__image-img"
-				/>
-			</div>
+        {/* Способ применения */}
+        <div className="product-detail__section">
+          <h3>Способ применения</h3>
+          <p>{product.applicationMethod || 'Способ применения не указан'}</p>
+        </div>
 
-			<div className="product-detail__info">
-				<h2 className="product-detail__title">{product.name}</h2>
-				<p className="product-detail__brand">{product.brand}</p>
+        {/* Состав */}
+        <div className="product-detail__section">
+          <h3>Состав</h3>
+          <p>{product.composition || 'Состав не указан'}</p>
+        </div>
 
-				{/* Описание продукта */}
-				<div className="product-detail__section">
-					<h3>Описание</h3>
-					<p>{product.description || 'Описание отсутствует'}</p>
-				</div>
+        <p className="product-detail__price">{price}</p>
 
-				{/* Способ применения */}
-				<div className="product-detail__section">
-					<h3>Способ применения</h3>
-					<p>{product.applicationMethod || 'Способ применения не указан'}</p>
-				</div>
-
-				{/* Состав */}
-				<div className="product-detail__section">
-					<h3>Состав</h3>
-					<p>{product.composition || 'Состав не указан'}</p>
-				</div>
-
-				<p className="product-detail__price">{product.price} ₽</p>
-
-				<div className="product-detail__add-to-cart">
-					<AddToCartButton product={product} />
-				</div>
-			</div>
-		</div>
-	);
+        <div className="product-detail__add-to-cart">
+          {/* Передаем imageSrc в AddToCartButton */}
+          <AddToCartButton product={product} image={productImage} />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ProductDetail;

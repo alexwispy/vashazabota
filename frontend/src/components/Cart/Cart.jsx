@@ -59,7 +59,11 @@ function Cart() {
         <div className="cart-items">
           {cartItems.map((item) => (
             <div key={item.id} className="cart-item">
-              <img src={item.image} alt={item.name} className="cart-item-image" />
+              <img 
+                src={item.image ? item.image : '/images/products/default-image.webp'} // Используем переданное изображение или стандартное
+                alt={item.name} 
+                className="cart-item-image" 
+              />
               <div className="cart-item-details">
                 <p className="cart-item-name">{item.name}</p>
                 <p className="cart-item-price">{item.price} ₽</p>
