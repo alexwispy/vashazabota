@@ -1,0 +1,84 @@
+/* Categories.css */
+
+.categories {
+	text-align: center;
+	margin: 50px 0;
+	font-family: 'Roboto', sans-serif;
+ }
+ 
+ .categories__title {
+	font-size: 28px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+ }
+ 
+ .categories__cards {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	gap: 20px;
+	cursor: pointer;
+ }
+ 
+ .categories__card {
+	width: 220px;
+	margin: 15px;
+	padding: 20px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, #e0f7fa, #80deea);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+	overflow: hidden;
+	position: relative;
+ }
+ 
+ .categories__card-img {
+	width: 100%;
+	height: auto;
+	border-radius: 10px;
+	transition: transform 0.3s ease;
+ }
+ 
+ .categories__card-title {
+	margin-top: 15px;
+	font-size: 20px;
+	color: #333;
+	font-weight: 600;
+	position: relative;
+ }
+ 
+ .categories__card-title a {
+	text-decoration: none;
+	color: inherit;
+	transition: color 0.3s ease;
+ }
+ 
+ .categories__card-title a:hover {
+	color: #00bcd4;
+ }
+ 
+ .categories__card:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+	background: linear-gradient(135deg, #ffcc80, #ffab40);
+ }
+ 
+ .categories__card-img:hover {
+	transform: scale(1.1);
+ }
+ 
+ .categories__card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.1);
+	pointer-events: none;
+	z-index: 1;
+ }
+ 

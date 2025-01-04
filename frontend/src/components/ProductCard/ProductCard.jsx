@@ -24,7 +24,9 @@ const ProductCard = ({ product }) => {
   // Если изображение с ошибкой, используем изображение по умолчанию
   const imageSrc = imageError ? defaultImage : productImage;
 
-  const price = product.price ? `${product.price} ₽` : 'Цена не указана';
+  // Определяем, какую цену показывать
+  const price = product.salePrice ? `${product.salePrice} ₽` : (product.price ? `${product.price} ₽` : 'Цена не указана');
+  const originalPrice = product.price && product.salePrice ? `${product.price} ₽` : null;
 
   return (
     <div className="product-card">
@@ -39,7 +41,18 @@ const ProductCard = ({ product }) => {
       </div>
       <div className="product-info">
         <h3 className="product-title">{product.name}</h3>
-        <p className="product-price">{price}</p>
+
+        {/* Отображаем цену со скидкой, если она есть */}
+        <p className="product-price">
+          {product.salePrice && originalPrice ? (
+            <>
+              <span className="product-price--sale">{price}</span>
+              <span className="product-price--original">{originalPrice}</span>
+            </>
+          ) : (
+            price
+          )}
+        </p>
         <p className="product-brand">{product.brand}</p>
       </div>
       {/* Передаем путь к изображению в AddToCartButton */}

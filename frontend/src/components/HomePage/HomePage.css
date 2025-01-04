@@ -4,42 +4,30 @@
 	max-width: 1200px;
 	margin: 0 auto;
 	text-align: center;
-}
-
-/* Секция "Главное приветствие" */
-.main-banner {
-	background-color: #fff;
-	padding: 50px 20px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ /* Стили для секции "Главное приветствие" */
+ .main-banner {
 	margin-bottom: 40px;
-	border-radius: 10px;
-	padding-top: 100px;
-}
-
-.main-banner h1 {
-	font-size: 36px;
-	color: #333;
-	margin-bottom: 15px;
-}
-
-.main-banner p {
-	font-size: 18px;
-	color: #666;
-}
-
-/* Секция "О магазине" */
-.about {
-	background-color: #fff;
-	padding: 40px 20px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ /* Стили для секции "Популярные категории" */
+ .categories {
 	margin-bottom: 40px;
-	border-radius: 10px;
-}
-
-/* Секция "Наши главные бренды" */
-.brands {
-	background-color: #fff;
-	padding: 40px 20px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	border-radius: 10px;
-}
+ }
+ 
+ /* Стили для секции "Рекомендуемые товары" */
+ .recommended-products {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "О бренде" */
+ .brand-section {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "Сезонные предложения" */
+ .seasonal-offers {
+	margin-bottom: 40px;
+ }
+ 

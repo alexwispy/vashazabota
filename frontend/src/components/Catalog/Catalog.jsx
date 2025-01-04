@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Catalog.css';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import dataService from '../../services/dataService.js';
 
 function ProductList() {
-  const [products, setProducts] = useState([]); // Состояние для хранения данных продуктов
-  const [categories, setCategories] = useState([]); // Состояние для категорий
-  const [loading, setLoading] = useState(true); // Состояние для загрузки
-  const [error, setError] = useState(null); // Состояние для ошибок
-  const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория
-  const [minPrice, setMinPrice] = useState(0); // Минимальная цена
-  const [maxPrice, setMaxPrice] = useState(1000); // Максимальная цена
-  const [sortOption, setSortOption] = useState('default'); // Опция сортировки
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [sortOption, setSortOption] = useState('default');
+
+  // Получаем параметры URL
+  const location = useLocation();
 
   // Функция для получения данных продуктов и категорий
   const fetchData = async () => {
@@ -23,7 +27,6 @@ function ProductList() {
       setProducts(productsData);
       setCategories(categoriesData);
 
-      // Определяем минимальную и максимальную цену из данных продуктов
       const prices = productsData.map(product => product.price);
       setMinPrice(Math.min(...prices));
       setMaxPrice(Math.max(...prices));
@@ -38,9 +41,17 @@ function ProductList() {
 
   useEffect(() => {
     fetchData();
-  }, []); // Загружаем данные один раз при монтировании компонента
 
-  // Фильтрация и сортировка продуктов
+    // Извлекаем параметр "category" из URL
+    const params = new URLSearchParams(location.search);
+    const categoryFromUrl = params.get('category'); // Получаем значение параметра category
+
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl); // Устанавливаем выбранную категорию
+    }
+  }, [location]);
+
+  // Фильтрация продуктов по категории и цене
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
@@ -52,10 +63,8 @@ function ProductList() {
       );
     }
 
-    // Фильтрация по цене
     filtered = filtered.filter(product => product.price >= minPrice && product.price <= maxPrice);
 
-    // Сортировка
     if (sortOption === 'asc-price') {
       filtered.sort((a, b) => a.price - b.price);
     } else if (sortOption === 'desc-price') {
@@ -66,7 +75,6 @@ function ProductList() {
       filtered.sort((a, b) => b.name.localeCompare(a.name));
     }
 
-    // Перемещаем товары с количеством меньше 1 в конец списка
     filtered.sort((a, b) => {
       if (a.quantity < 1 && b.quantity >= 1) return 1;
       if (a.quantity >= 1 && b.quantity < 1) return -1;
@@ -111,3 +119,4 @@ function ProductList() {
 }
 
 export default ProductList;
+
