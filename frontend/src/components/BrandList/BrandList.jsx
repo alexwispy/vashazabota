@@ -38,12 +38,6 @@ const BrandList = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (selectedBrand) {
-      console.log(`Выбран бренд: ${selectedBrand}`);
-    }
-  }, [selectedBrand]);
-
   const handleCardClick = (productId) => {
     console.log('Product ID:', productId);
     navigate(`/products/${productId}`);
