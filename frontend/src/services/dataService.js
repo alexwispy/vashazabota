@@ -1,7 +1,13 @@
+// Определение базового URL для API
+const BASE_URL =
+	process.env.NODE_ENV === 'production'
+		? 'http://vashazabota.ru/api' // Для продакшена
+		: 'http://localhost:5000/api'; // Для локальной разработки
+
 // Функция для получения всех продуктов с сервера
 const fetchProductsFromServer = async () => {
 	try {
-		const response = await fetch('http://localhost:5000/api/products');
+		const response = await fetch(`${BASE_URL}/products`);
 		if (!response.ok) {
 			throw new Error('Ошибка при получении данных с сервера');
 		}
@@ -16,7 +22,7 @@ const fetchProductsFromServer = async () => {
 // Функция для получения продукта по ID с сервера
 const fetchProductByIdFromServer = async (id) => {
 	try {
-		const response = await fetch(`http://localhost:5000/api/products/${id}`);
+		const response = await fetch(`${BASE_URL}/products/${id}`);
 		if (!response.ok) {
 			throw new Error('Ошибка при получении данных о продукте');
 		}
@@ -31,7 +37,7 @@ const fetchProductByIdFromServer = async (id) => {
 // Функция для получения всех брендов с сервера
 const fetchBrandsFromServer = async () => {
 	try {
-		const response = await fetch('http://localhost:5000/api/brands');
+		const response = await fetch(`${BASE_URL}/brands`);
 		if (!response.ok) {
 			throw new Error('Ошибка при получении брендов с сервера');
 		}
@@ -46,7 +52,7 @@ const fetchBrandsFromServer = async () => {
 // Функция для получения продуктов по бренду с сервера
 const fetchProductsByBrandFromServer = async (brand) => {
 	try {
-		const response = await fetch(`http://localhost:5000/api/products/brand/${brand}`);
+		const response = await fetch(`${BASE_URL}/products/brand/${brand}`);
 		if (!response.ok) {
 			throw new Error('Ошибка при получении продуктов для бренда');
 		}
@@ -61,7 +67,7 @@ const fetchProductsByBrandFromServer = async (brand) => {
 // Функция для получения категорий с сервера
 const fetchCategoriesFromServer = async () => {
 	try {
-		const response = await fetch('http://localhost:5000/api/categories');
+		const response = await fetch(`${BASE_URL}/categories`);
 		if (!response.ok) {
 			throw new Error('Ошибка при получении категорий с сервера');
 		}
@@ -76,7 +82,7 @@ const fetchCategoriesFromServer = async () => {
 // Функция для отправки заказа на сервер
 const sendOrderToServer = async (name, phone, product, address) => {
 	try {
-		const response = await fetch('http://localhost:5000/api/order', {
+		const response = await fetch(`${BASE_URL}/order`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
