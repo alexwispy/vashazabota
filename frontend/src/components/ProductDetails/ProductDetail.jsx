@@ -13,9 +13,12 @@ const ProductDetail = () => {
     return <div>Продукт не найден</div>;
   }
 
-  const productImage = imageSrc || '/images/products/default-image.jpg'; // Используем картинку из пропсов или дефолтную
+  // Формируем путь к изображению, если оно не передано
+  const productImage = imageSrc || '/images/products/default-image.jpg'; 
 
-  const price = product.price ? `${product.price} ₽` : 'Цена не указана';
+  // Определяем цену
+  const price = product.salePrice ? `${product.salePrice} ₽` : (product.price ? `${product.price} ₽` : 'Цена не указана');
+  const originalPrice = product.price && product.salePrice ? `${product.price} ₽` : null;
 
   return (
     <div className="product-detail">
@@ -49,7 +52,17 @@ const ProductDetail = () => {
           <p>{product.composition || 'Состав не указан'}</p>
         </div>
 
-        <p className="product-detail__price">{price}</p>
+        {/* Цена и скидка */}
+        <div className="product-detail__price">
+          {product.salePrice && originalPrice ? (
+            <>
+              <span className="product-detail__price-sale">{price}</span>
+              <span className="product-detail__price-original">{originalPrice}</span>
+            </>
+          ) : (
+            price
+          )}
+        </div>
 
         <div className="product-detail__add-to-cart">
           {/* Передаем imageSrc в AddToCartButton */}
