@@ -1,21 +1,38 @@
 const express = require('express');
+const fs = require('fs');
 const cors = require('cors');
-const getProducts = require('./routes/getProducts');  // Эндпоинт для всех продуктов
-const getProductById = require('./routes/getProductById');  // Эндпоинт для продукта по ID
-const getProductsByBrand = require('./routes/getProductsByBrand');  // Эндпоинт для продуктов по бренду
-const getBrands = require('./routes/getBrands');  // Новый эндпоинт для брендов
-const getCategories = require('./routes/getCategories');  // Новый эндпоинт для категорий
-const { sendOrderNotification } = require('./bot');  // Импортируем функцию для отправки уведомлений
-const imageRouter = require('./routes/imageRoute');  // Подключаем роутер для изображений
+const http = require('http');
+const https = require('https');
+const getProducts = require('./routes/getProducts');
+const getProductById = require('./routes/getProductById');
+const getProductsByBrand = require('./routes/getProductsByBrand');
+const getBrands = require('./routes/getBrands');
+const getCategories = require('./routes/getCategories');
+const { sendOrderNotification } = require('./bot');
+const imageRouter = require('./routes/imageRoute');
 
 const app = express();
 
 // Разрешаем CORS для локального хоста и вашего сервера
 app.use(cors({
-	origin: ['http://localhost:3000', 'http://95.163.237.158'], // Указываем допустимые источники
-	methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Разрешенные методы
-	allowedHeaders: ['Content-Type', 'Authorization'], // Разрешенные заголовки
+	origin: [
+		'http://localhost:3000',
+		'https://localhost:3000',
+		'http://95.163.237.158',
+		'https://95.163.237.158'
+	],
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Для продакшн-среды используем сертификаты
+let sslOptions = {};
+if (process.env.NODE_ENV === 'production') {
+	sslOptions = {
+		key: fs.readFileSync('/path/to/production/private.key'),
+		cert: fs.readFileSync('/path/to/production/certificate.crt')
+	};
+}
 
 app.use(express.json());  // Для парсинга JSON в теле запроса
 
@@ -58,8 +75,23 @@ app.post('/api/order', async (req, res) => {
 	}
 });
 
-// Запуск сервера
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-	console.log(`Сервер работает на порту ${port}`);
-});
+// Порты для локальной разработки и продакшн-среды
+const httpPort = process.env.NODE_ENV === 'production' ? 80 : 5000;  // Порт в зависимости от среды
+const httpsPort = process.env.NODE_ENV === 'production' ? 443 : 5001;  // Порт для HTTPS
+
+if (process.env.NODE_ENV === 'production') {
+	// Создание HTTPS сервера для продакшн
+	https.createServer(sslOptions, app).listen(httpsPort, () => {
+		console.log(`HTTPS сервер работает на порту ${httpsPort}`);
+	});
+
+	// Создание HTTP сервера и перенаправление на HTTPS
+	http.createServer(app).listen(httpPort, () => {
+		console.log(`HTTP сервер работает на порту ${httpPort}`);
+	});
+} else {
+	// Локальная разработка
+	app.listen(5000, () => {
+		console.log('Сервер работает на порту 5000');
+	});
+}
