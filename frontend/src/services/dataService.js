@@ -1,13 +1,12 @@
+// Функция для получения базового URL API
 const getApiBaseUrl = () => {
 	const hostname = window.location.hostname;
-	const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
-	const apiUrl = isLocalhost
-		? 'http://localhost:5000' // для локального окружения
-		: window.location.protocol === 'https:' // если сайт открыт через HTTPS
-			? `https://${hostname}` // для продакшн-сервера через HTTPS
-			: `http://${hostname}`; // для продакшн-сервера через HTTP
+	const protocol = window.location.protocol;
+	const isProduction = hostname === 'vashazabota.ru';
+	const apiPort = isProduction ? 5001 : 3000; // Указываем порты для продакшн и локальной среды
 
-	return apiUrl;
+	// Формируем URL с учетом порта
+	return `${protocol}//${hostname}:${apiPort}`;
 };
 
 // Функция для выполнения запроса с тайм-аутом
@@ -16,7 +15,12 @@ const fetchWithTimeout = async (url, options = {}, timeout = 5000) => {
 	const id = setTimeout(() => controller.abort(), timeout);
 
 	try {
-		const response = await fetch(url, { ...options, signal: controller.signal });
+		const headers = {
+			'Content-Type': 'application/json',
+			...(options.headers || {}), // Добавляем переданные заголовки
+		};
+
+		const response = await fetch(url, { ...options, headers, signal: controller.signal });
 		clearTimeout(id);
 		return response;
 	} catch (error) {
@@ -32,14 +36,17 @@ const fetchProductsFromServer = async () => {
 	try {
 		const apiUrl = getApiBaseUrl();
 		const response = await fetchWithTimeout(`${apiUrl}/api/products`);
+
 		if (!response.ok) {
 			throw new Error(`Ошибка при получении данных с сервера: ${response.statusText}`);
 		}
+
 		const data = await response.json();
+		console.log('Response Data:', data); // Логируем полученные данные
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении данных с сервера:', error);
-		return []; // Возвращаем пустой массив в случае ошибки
+		return [];
 	}
 };
 
@@ -48,14 +55,17 @@ const fetchProductByIdFromServer = async (id) => {
 	try {
 		const apiUrl = getApiBaseUrl();
 		const response = await fetchWithTimeout(`${apiUrl}/api/products/${id}`);
+
 		if (!response.ok) {
 			throw new Error(`Ошибка при получении данных о продукте: ${response.statusText}`);
 		}
+
 		const data = await response.json();
+		console.log('Product Data:', data); // Логируем данные продукта
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении данных о продукте:', error);
-		return null; // Возвращаем null, если продукт не найден
+		return null;
 	}
 };
 
@@ -64,14 +74,16 @@ const fetchBrandsFromServer = async () => {
 	try {
 		const apiUrl = getApiBaseUrl();
 		const response = await fetchWithTimeout(`${apiUrl}/api/brands`);
+
 		if (!response.ok) {
 			throw new Error(`Ошибка при получении брендов с сервера: ${response.statusText}`);
 		}
+
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении брендов с сервера:', error);
-		return []; // Возвращаем пустой массив в случае ошибки
+		return [];
 	}
 };
 
@@ -80,14 +92,16 @@ const fetchProductsByBrandFromServer = async (brand) => {
 	try {
 		const apiUrl = getApiBaseUrl();
 		const response = await fetchWithTimeout(`${apiUrl}/api/products/brand/${brand}`);
+
 		if (!response.ok) {
 			throw new Error(`Ошибка при получении продуктов для бренда: ${response.statusText}`);
 		}
+
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении продуктов для бренда:', error);
-		return []; // Возвращаем пустой массив в случае ошибки
+		return [];
 	}
 };
 
@@ -96,14 +110,16 @@ const fetchCategoriesFromServer = async () => {
 	try {
 		const apiUrl = getApiBaseUrl();
 		const response = await fetchWithTimeout(`${apiUrl}/api/categories`);
+
 		if (!response.ok) {
 			throw new Error(`Ошибка при получении категорий с сервера: ${response.statusText}`);
 		}
+
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении категорий с сервера:', error);
-		return []; // Возвращаем пустой массив в случае ошибки
+		return [];
 	}
 };
 
@@ -116,17 +132,17 @@ const sendOrderToServer = async (name, phone, product, address) => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ name, phone, product, address }), // Передаем данные о заказе, включая адрес
+			body: JSON.stringify({ name, phone, product, address }),
 		});
 
 		if (!response.ok) {
 			throw new Error(`Ошибка при отправке заказа: ${response.statusText}`);
 		}
 
-		return await response.json(); // Возвращаем ответ от сервера (например, успешное сообщение)
+		return await response.json(); // Возвращаем ответ от сервера
 	} catch (error) {
 		console.error('Ошибка при отправке заказа:', error);
-		throw error; // Бросаем ошибку, чтобы можно было обработать ее в компоненте
+		throw error;
 	}
 };
 
@@ -153,12 +169,12 @@ const getCategories = async () => {
 
 // Экспортируем все методы в dataService
 const dataService = {
-	getProducts, // Получить все продукты
-	getProductById, // Получить продукт по ID
-	getBrands, // Получить все бренды
-	getProductsByBrand, // Получить продукты по бренду
-	getCategories, // Получить все категории
-	sendOrderToServer, // Отправить заказ на сервер (с учетом имени, телефона, товара и адреса)
+	getProducts,
+	getProductById,
+	getBrands,
+	getProductsByBrand,
+	getCategories,
+	sendOrderToServer,
 };
 
-export default dataService; // Экспортируем объект dataService
+export default dataService;

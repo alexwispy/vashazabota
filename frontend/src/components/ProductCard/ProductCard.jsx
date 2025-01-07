@@ -1,64 +1,65 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Добавляем импорт useNavigate
+import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 import AddToCartButton from '../AddToCartButton/AddToCartButton';
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate(); // Создаем экземпляр navigate
-  const [imageError, setImageError] = useState(false);  // Состояние для обработки ошибки загрузки изображения
+	const navigate = useNavigate();
+	const [imageError, setImageError] = useState(false);
 
-  const handleImageClick = () => {
-    const imageSrc = imageError ? '/images/products/default-image.webp' : `http://localhost:5000/images/${product.id}.webp`;
-    navigate(`/products/${product.id}`, { state: { product, image: imageSrc } }); // Переход на страницу товара с передачей данных
-  };
+	const getApiBaseUrl = () => {
+		const hostname = window.location.hostname;
+		const protocol = window.location.protocol;
+		const port = hostname === 'localhost' ? 3001 : 5001; // Используем порт 3001 для локального сервера и 5001 для продакшн
 
-  // Формируем путь к изображению, используя ID продукта и добавляя .webp расширение
-  const productImage = `http://localhost:5000/images/${product.id}.webp`;
-  const defaultImage = '/images/products/default-image.webp'; // Путь к изображению по умолчанию
+		return `${protocol}//${hostname}:${port}`;
+	};
 
-  // Функция для обработки ошибки загрузки изображения
-  const handleError = () => {
-    setImageError(true); // Если произошла ошибка, меняем состояние
-  };
+	const handleImageClick = () => {
+		const imageSrc = imageError ? '/images/products/default-image.webp' : `${getApiBaseUrl()}/images/${product.id}.webp`;
+		navigate(`/products/${product.id}`, { state: { product, image: imageSrc } });
+	};
 
-  // Если изображение с ошибкой, используем изображение по умолчанию
-  const imageSrc = imageError ? defaultImage : productImage;
+	const productImage = `${getApiBaseUrl()}/images/${product.id}.webp`;
+	const defaultImage = '/images/products/default-image.webp';
 
-  // Определяем, какую цену показывать
-  const price = product.salePrice ? `${product.salePrice} ₽` : (product.price ? `${product.price} ₽` : 'Цена не указана');
-  const originalPrice = product.price && product.salePrice ? `${product.price} ₽` : null;
+	const handleError = () => {
+		setImageError(true);
+	};
 
-  return (
-    <div className="product-card">
-      <div className="product-image">
-        <img
-          src={imageSrc}  // Используем путь к изображению или дефолтное
-          alt={product.name}
-          className="product-image-img"
-          onClick={handleImageClick}
-          onError={handleError}  // Обработчик ошибки
-        />
-      </div>
-      <div className="product-info">
-        <h3 className="product-title">{product.name}</h3>
+	const imageSrc = imageError ? defaultImage : productImage;
 
-        {/* Отображаем цену со скидкой, если она есть */}
-        <p className="product-price">
-          {product.salePrice && originalPrice ? (
-            <>
-              <span className="product-price--sale">{price}</span>
-              <span className="product-price--original">{originalPrice}</span>
-            </>
-          ) : (
-            price
-          )}
-        </p>
-        <p className="product-brand">{product.brand}</p>
-      </div>
-      {/* Передаем путь к изображению в AddToCartButton */}
-      <AddToCartButton product={product} image={imageSrc} />
-    </div>
-  );
+	const price = product.salePrice ? `${product.salePrice} ₽` : (product.price ? `${product.price} ₽` : 'Цена не указана');
+	const originalPrice = product.price && product.salePrice ? `${product.price} ₽` : null;
+
+	return (
+		<div className="product-card">
+			<div className="product-image">
+				<img
+					src={imageSrc}
+					alt={product.name}
+					className="product-image-img"
+					onClick={handleImageClick}
+					onError={handleError}
+				/>
+			</div>
+			<div className="product-info">
+				<h3 className="product-title">{product.name}</h3>
+				<p className="product-price">
+					{product.salePrice && originalPrice ? (
+						<>
+							<span className="product-price--sale">{price}</span>
+							<span className="product-price--original">{originalPrice}</span>
+						</>
+					) : (
+						price
+					)}
+				</p>
+				<p className="product-brand">{product.brand}</p>
+			</div>
+			<AddToCartButton product={product} image={imageSrc} />
+		</div>
+	);
 };
 
 export default ProductCard;
