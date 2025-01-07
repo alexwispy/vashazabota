@@ -3,6 +3,7 @@ const fs = require('fs');
 const cors = require('cors');
 const http = require('http');
 const https = require('https');
+const app = express();
 const getProducts = require('./routes/getProducts');
 const getProductById = require('./routes/getProductById');
 const getProductsByBrand = require('./routes/getProductsByBrand');
@@ -11,30 +12,22 @@ const getCategories = require('./routes/getCategories');
 const { sendOrderNotification } = require('./bot');
 const imageRouter = require('./routes/imageRoute');
 
-const app = express();
+// Разрешаем CORS
+const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001', 'http://localhost:3000'];
 
-// Разрешаем CORS для локального хоста и вашего сервера
 app.use(cors({
-	origin: [
-		'http://localhost:3000',
-		'https://localhost:3000',
-		'http://95.163.237.158',
-		'https://95.163.237.158'
-	],
-	methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	allowedHeaders: ['Content-Type', 'Authorization'],
+	origin: (origin, callback) => {
+		if (!origin || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	credentials: true, // Если нужно передавать куки
 }));
 
-// Для продакшн-среды используем сертификаты
-let sslOptions = {};
-if (process.env.NODE_ENV === 'production') {
-	sslOptions = {
-		key: fs.readFileSync('/path/to/production/private.key'),
-		cert: fs.readFileSync('/path/to/production/certificate.crt')
-	};
-}
-
-app.use(express.json());  // Для парсинга JSON в теле запроса
+// Для парсинга JSON в теле запроса
+app.use(express.json());
 
 // Эндпоинт для получения всех продуктов
 app.get('/api/products', getProducts);
@@ -49,7 +42,7 @@ app.get('/api/products/brand/:brand', getProductsByBrand);
 app.get('/api/brands', getBrands);
 
 // Эндпоинт для получения категорий
-app.get('/api/categories', getCategories);  // Новый маршрут для получения категорий
+app.get('/api/categories', getCategories);
 
 // Эндпоинт для обслуживания изображений
 app.use('/images', imageRouter);
@@ -75,11 +68,19 @@ app.post('/api/order', async (req, res) => {
 	}
 });
 
-// Порты для локальной разработки и продакшн-среды
-const httpPort = process.env.NODE_ENV === 'production' ? 80 : 5000;  // Порт в зависимости от среды
-const httpsPort = process.env.NODE_ENV === 'production' ? 443 : 5001;  // Порт для HTTPS
+// Порты для локальной и продакшн-среды
+const args = process.argv.slice(2);
+const useHttps = args.includes('--https');
+const httpPort = useHttps ? 5000 : 3001;   // Порт для HTTP
+const httpsPort = useHttps ? 5001 : 3001; // Порт для HTTPS
 
-if (process.env.NODE_ENV === 'production') {
+if (useHttps) {
+	// Настройки SSL для продакшн-среды
+	const sslOptions = {
+		key: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/privkey.pem'),
+		cert: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/fullchain.pem')
+	};
+
 	// Создание HTTPS сервера для продакшн
 	https.createServer(sslOptions, app).listen(httpsPort, () => {
 		console.log(`HTTPS сервер работает на порту ${httpsPort}`);
@@ -90,8 +91,8 @@ if (process.env.NODE_ENV === 'production') {
 		console.log(`HTTP сервер работает на порту ${httpPort}`);
 	});
 } else {
-	// Локальная разработка
-	app.listen(5000, () => {
-		console.log('Сервер работает на порту 5000');
+	// Создание HTTP сервера для локальной среды
+	http.createServer(app).listen(httpPort, () => {
+		console.log(`HTTP сервер работает на порту ${httpPort}`);
 	});
 }
