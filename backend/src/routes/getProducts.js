@@ -1,7 +1,6 @@
-// routes/getProducts.js
-import getCachedProducts from './getCachedProducts.js';  // Исправленный путь
 
-const getProducts = (res) => {
+
+const getProducts = (req, res) => {
 	try {
 		const products = getCachedProducts();
 		if (products.length > 0) {
