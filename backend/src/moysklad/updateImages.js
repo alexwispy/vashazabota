@@ -32,6 +32,7 @@ const updateImages = async () => {
 		const products = await getProducts(token);
 		if (products.length > 0) {
 			for (const product of products) {
+				await delay(1000); // ✅ Гарантируем паузу перед обработкой следующего продукта
 				if (product.images && product.images.meta && product.images.meta.href) {
 					const imagesResponse = await axios.get(product.images.meta.href, {
 						headers: { Authorization: `Bearer ${token}` },
@@ -49,13 +50,14 @@ const updateImages = async () => {
 
 							if (fs.existsSync(webpPath)) {
 								console.log(`Изображение для продукта с ID ${productId} уже существует, пропускаю скачивание.`);
+								await delay(1000);  // ✅ Задержка перед пропуском
 								continue;
 							}
 
 							const downloadHref = image.meta.downloadHref;
 							if (downloadHref) {
 								console.log(`Скачиваю изображение для продукта с ID ${productId}`);
-								await delay(1000); // Задержка в 1 секунду перед скачиванием
+								await delay(1000); // ✅ Задержка перед скачиванием
 								const response = await axios.get(downloadHref, {
 									headers: { Authorization: `Bearer ${token}` },
 									responseType: 'arraybuffer',
