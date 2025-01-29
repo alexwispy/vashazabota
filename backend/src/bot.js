@@ -1,4 +1,4 @@
-const TelegramBot = require('node-telegram-bot-api');
+import TelegramBot from 'node-telegram-bot-api';
 
 // Настройки бота
 const token = '8150818094:AAGh58G5my--Or8y3cmVzUlZBFCCNwAb184';
@@ -37,4 +37,4 @@ ${productDetails}
 	}
 };
 
-module.exports = { sendOrderNotification };
+export { sendOrderNotification };

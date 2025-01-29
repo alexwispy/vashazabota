@@ -1,16 +1,17 @@
-const express = require('express');
-const fs = require('fs');
-const cors = require('cors');
-const http = require('http');
-const https = require('https');
+import express from 'express';
+import fs from 'fs';
+import cors from 'cors';
+import http from 'http';
+import https from 'https';
+import getProducts from './routes/getProducts.js';
+import getProductById from './routes/getProductById.js';
+import getProductsByBrand from './routes/getProductsByBrand.js';
+import getBrands from './routes/getBrands.js';
+import getCategories from './routes/getCategories.js';
+import { sendOrderNotification } from './bot.js';
+import imageRouter from './routes/imageRoute.js';
+
 const app = express();
-const getProducts = require('./routes/getProducts');
-const getProductById = require('./routes/getProductById');
-const getProductsByBrand = require('./routes/getProductsByBrand');
-const getBrands = require('./routes/getBrands');
-const getCategories = require('./routes/getCategories');
-const { sendOrderNotification } = require('./bot');
-const imageRouter = require('./routes/imageRoute');
 
 // Разрешаем CORS
 const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001', 'http://localhost:3000'];

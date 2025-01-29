@@ -1,6 +1,6 @@
-const getCachedProducts = require('./getCachedProducts');  // Импортируем getCachedProducts
+import getCachedProducts from './getCachedProducts.js';  // Импортируем getCachedProducts
 
-const getBrands = (req, res) => {
+const getBrands = (res) => {
 	try {
 		const products = getCachedProducts();  // Получаем кэшированные продукты
 
@@ -18,4 +18,4 @@ const getBrands = (req, res) => {
 	}
 };
 
-module.exports = getBrands;
+export default getBrands;

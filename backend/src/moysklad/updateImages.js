@@ -1,8 +1,8 @@
-const axios = require('axios');
-const path = require('path');
-const fs = require('fs');
-const sharp = require('sharp');
-const { getToken } = require('./auth');
+import axios from 'axios';
+import path from 'path';
+import fs from 'fs';
+import sharp from 'sharp';
+import { getToken } from './auth';
 
 const imagesDirectory = path.join(__dirname, '..', '..', 'public', 'img');
 
@@ -80,4 +80,4 @@ const updateImages = async () => {
 // Запуск функции для обновления изображений
 updateImages();
 
-module.exports = { updateImages };
+export { updateImages };

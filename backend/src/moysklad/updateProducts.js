@@ -1,10 +1,10 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-const { getToken } = require('./auth');
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { getToken } from './auth';
 
 // Путь к файлу для сохранения ассортимента
-const assortmentJsonPath = path.join(__dirname, './cache/assortment.json'); // JSON-файл для сохранения
+const assortmentJsonPath = path.join(path.dirname(new URL(import.meta.url).pathname), './cache/assortment.json'); // JSON-файл для сохранения
 
 // Проверка существования папки cache и её создание, если не существует
 if (!fs.existsSync(path.dirname(assortmentJsonPath))) {
@@ -92,10 +92,10 @@ const updateProducts = async () => {
 };
 
 // Экспортируем функцию для использования в других частях проекта
-module.exports = { updateProducts };
+export { updateProducts };
 
 // Если нужно сразу запустить обработку
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 	updateProducts()
 		.then(() => console.log('Обработка завершена.'))
 		.catch(error => console.error('Ошибка при обработке ассортимента:', error));

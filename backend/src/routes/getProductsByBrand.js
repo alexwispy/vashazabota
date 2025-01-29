@@ -1,10 +1,10 @@
-const getCachedProducts = require('./getCachedProducts');  // Получение кэшированных продуктов
+import getCachedProducts from './getCachedProducts.js';  // Получение кэшированных продуктов
 
-const getProductsByBrand = (req, res) => {
+const getProductsByBrand = async (req, res) => {
 	const { brand } = req.params;  // Получаем бренд из параметров URL
 
 	try {
-		const products = getCachedProducts();  // Получаем кэшированные продукты
+		const products = await getCachedProducts();  // Получаем кэшированные продукты
 
 		// Фильтруем продукты по бренду и проверяем, чтобы поле brand было валидным
 		const filteredProducts = products
@@ -26,4 +26,4 @@ const getProductsByBrand = (req, res) => {
 	}
 };
 
-module.exports = getProductsByBrand;
+export default getProductsByBrand;

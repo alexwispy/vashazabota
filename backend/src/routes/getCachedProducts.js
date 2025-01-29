@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Путь к кэшированному файлу ассортимента
-const assortmentJsonPath = path.join(__dirname, '../moysklad/cache/assortment.json');
+const assortmentJsonPath = path.join(path.resolve(), '../moysklad/cache/assortment.json');
 
 // Функция для получения кэшированных продуктов из файла
 const getCachedProducts = () => {
@@ -15,4 +15,4 @@ const getCachedProducts = () => {
     return products;
 };
 
-module.exports = getCachedProducts;
+export default getCachedProducts;

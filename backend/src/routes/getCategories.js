@@ -1,7 +1,7 @@
 // Импортируем функцию для получения кэшированных продуктов из правильного пути
-const getCachedProducts = require('./getCachedProducts');  // Исправляем путь
+import getCachedProducts from './getCachedProducts.js';  // Исправляем путь
 
-const getCategories = (req, res) => {
+const getCategories = (res) => {
 	try {
 		// Получаем кэшированные продукты
 		const products = getCachedProducts();
@@ -49,4 +49,4 @@ const getCategories = (req, res) => {
 	}
 };
 
-module.exports = getCategories;
+export default getCategories;

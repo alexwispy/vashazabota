@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 const login = 'admin@pakhomova2';
 const password = 'keypass11';
@@ -35,4 +35,4 @@ const getToken = async () => {
 	}
 };
 
-module.exports = { getToken };
+export { getToken };

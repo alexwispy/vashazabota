@@ -1,8 +1,8 @@
 // routes/getProductById.js
-const getCachedProducts = require('./getCachedProducts');  // Исправленный путь
+import getCachedProducts from './getCachedProducts.js';  // Исправленный путь
 
 const getProductById = (req, res) => {
-	const { id } = req.params;  // Получаем ID из параметров URL
+	const id = Number(req.params.id);  // Получаем ID из параметров URL и преобразуем в число
 
 	try {
 		const products = getCachedProducts();
@@ -20,4 +20,4 @@ const getProductById = (req, res) => {
 	}
 };
 
-module.exports = getProductById;
+export default getProductById;

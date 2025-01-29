@@ -1,7 +1,7 @@
 // routes/getProducts.js
-const getCachedProducts = require('./getCachedProducts');  // Исправленный путь
+import getCachedProducts from './getCachedProducts.js';  // Исправленный путь
 
-const getProducts = (req, res) => {
+const getProducts = (res) => {
 	try {
 		const products = getCachedProducts();
 		if (products.length > 0) {
@@ -15,4 +15,4 @@ const getProducts = (req, res) => {
 	}
 };
 
-module.exports = getProducts;
+export default getProducts;
