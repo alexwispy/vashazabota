@@ -1,7 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-import { getToken } from './auth';
+import { getToken } from './auth.js';
 
 // Путь к файлу для сохранения ассортимента
 const assortmentJsonPath = path.join(path.dirname(new URL(import.meta.url).pathname), './cache/assortment.json'); // JSON-файл для сохранения

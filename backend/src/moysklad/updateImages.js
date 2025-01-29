@@ -2,8 +2,12 @@ import axios from 'axios';
 import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
-import { getToken } from './auth';
+import { getToken } from './auth.js';
+import { fileURLToPath } from 'url';
 
+// Создаём __dirname вручную для ES-модулей
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const imagesDirectory = path.join(__dirname, '..', '..', 'public', 'img');
 
 // Создаём папку для изображений, если она не существует
@@ -20,13 +24,14 @@ const getProducts = async (token) => {
 	return response.data.rows;
 };
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const updateImages = async () => {
 	const token = await getToken();
 	if (token) {
 		const products = await getProducts(token);
 		if (products.length > 0) {
 			for (const product of products) {
-				// Проверяем, есть ли у продукта изображения
 				if (product.images && product.images.meta && product.images.meta.href) {
 					const imagesResponse = await axios.get(product.images.meta.href, {
 						headers: { Authorization: `Bearer ${token}` },
@@ -35,33 +40,28 @@ const updateImages = async () => {
 
 					for (const image of images) {
 						const href = image.meta.href;
-						// Извлекаем ID продукта из href
 						const regex = /\/product\/([^\/]+)\/images/;
 						const match = href.match(regex);
 
 						if (match && match[1]) {
 							const productId = match[1];  // Извлекаем ID
-
-							// Формируем имя файла для изображения в папке public/img
 							const webpPath = path.join(imagesDirectory, `${productId}.webp`);
 
-							// Проверяем, существует ли файл изображения
 							if (fs.existsSync(webpPath)) {
 								console.log(`Изображение для продукта с ID ${productId} уже существует, пропускаю скачивание.`);
-								continue;  // Пропускаем дальнейшие шаги, если изображение уже существует
+								continue;
 							}
 
 							const downloadHref = image.meta.downloadHref;
 							if (downloadHref) {
-								// Скачиваем изображение
 								console.log(`Скачиваю изображение для продукта с ID ${productId}`);
+								await delay(1000); // Задержка в 1 секунду перед скачиванием
 								const response = await axios.get(downloadHref, {
 									headers: { Authorization: `Bearer ${token}` },
 									responseType: 'arraybuffer',
 								});
 								const imageBuffer = response.data;
 
-								// Конвертируем изображение в WebP
 								await sharp(imageBuffer).webp().toFile(webpPath);
 							}
 						}
