@@ -14,11 +14,13 @@ import ReturnAndExchange from './components/ReturnAndExchange/ReturnAndExchange'
 import Cart from './components/Cart/Cart'; // Импортируем компонент корзины
 import ProductDetail from './components/ProductDetails/ProductDetail'; // Импортируем компонент с деталями продукта
 import CheckoutPage from './components/CheckoutPage/CheckoutPage'; // Импортируем компонент страницы оформления заказа
+import { YMInitializer } from 'react-yandex-metrika';
 
 function App() {
 	return (
 		<Router>
 			<Header />
+			<YMInitializer accounts={[99714324]} options={{ webvisor: true, clickmap: true }} />
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/products" element={<ProductList />} />
@@ -29,7 +31,7 @@ function App() {
 				<Route path="/return-and-exchange" element={<ReturnAndExchange />} />
 				<Route path="/cart" element={<Cart />} />
 				<Route path="/products/:id" element={<ProductDetail />} />
-				<Route path="/checkout" element={<CheckoutPage />} /> 
+				<Route path="/checkout" element={<CheckoutPage />} />
 			</Routes>
 			<Footer />
 		</Router>
