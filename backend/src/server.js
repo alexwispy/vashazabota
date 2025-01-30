@@ -4,12 +4,12 @@ import cors from 'cors';
 import http from 'http';
 import https from 'https';
 import getProducts from './routes/getProducts.js';
-import getProductById from './routes/getProductById';
-import getProductsByBrand from './routes/getProductsByBrand';
-import getBrands from './routes/getBrands';
-import getCategories from './routes/getCategories';
-import { sendOrderNotification } from './bot';
-import imageRouter from './routes/imageRoute';
+import getProductById from './routes/getProductById.js';
+import getProductsByBrand from './routes/getProductsByBrand.js';
+import getBrands from './routes/getBrands.js';
+import getCategories from './routes/getCategories.js';
+import { sendOrderNotification } from './bot.js';
+import imageRouter from './routes/imageRoute.js';
 
 const app = express();
 

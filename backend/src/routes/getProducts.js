@@ -1,6 +1,6 @@
+import getCachedProducts from './getCachedProducts.js';
 
-
-const getProducts = (req, res) => {
+const getProducts = (req, res) => {  // ✅ Теперь req передаётся правильно
 	try {
 		const products = getCachedProducts();
 		if (products.length > 0) {
@@ -15,3 +15,21 @@ const getProducts = (req, res) => {
 };
 
 export default getProducts;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

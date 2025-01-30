@@ -55,3 +55,4 @@ const getCategories = (req, res) => {  // ✅ Добавляем req, res
 };
 
 export default getCategories;
+

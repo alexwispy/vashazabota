@@ -11,25 +11,25 @@ const assortmentJsonPath = path.join(__dirname, '../moysklad/cache/assortment.js
 
 // Функция для получения кэшированных продуктов
 const getCachedProducts = () => {
-	try {
-		if (!fs.existsSync(assortmentJsonPath)) {
-			console.error('⚠️ Файл assortment.json не найден.');
-			return [];
-		}
+    try {
+        if (!fs.existsSync(assortmentJsonPath)) {
+            console.error('⚠️ Файл assortment.json не найден.');
+            return [];
+        }
 
-		const fileData = fs.readFileSync(assortmentJsonPath, 'utf8');
+        const fileData = fs.readFileSync(assortmentJsonPath, 'utf8');
 
-		if (!fileData.trim()) {
-			console.error('⚠️ Файл assortment.json пуст.');
-			return [];
-		}
+        if (!fileData.trim()) {
+            console.error('⚠️ Файл assortment.json пуст.');
+            return [];
+        }
 
-		const products = JSON.parse(fileData);
-		return Array.isArray(products) ? products : [];
-	} catch (error) {
-		console.error('❌ Ошибка при чтении кэшированных продуктов:', error);
-		return [];
-	}
+        const products = JSON.parse(fileData);
+        return Array.isArray(products) ? products : [];
+    } catch (error) {
+        console.error('❌ Ошибка при чтении кэшированных продуктов:', error);
+        return [];
+    }
 };
 
 export default getCachedProducts;

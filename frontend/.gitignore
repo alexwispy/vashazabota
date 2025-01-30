@@ -1,13 +1,24 @@
-# Игнорировать папку node_modules
-node_modules/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Игнорировать файлы и папки, связанные с ОС
-.DS_Store         # macOS
-Thumbs.db         # Windows
+node_modules
+dist
+dist-ssr
+*.local
 
-# Игнорировать временные файлы редакторов
-.vscode/
-.idea/
-
-# Игнорировать файлы для сборки (если есть) 
-build/
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

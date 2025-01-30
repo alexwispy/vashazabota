@@ -3,7 +3,7 @@ import getCachedProducts from './getCachedProducts.js';  // Импортируе
 const getBrands = (req, res) => {  // ✅ Добавляем req, res
 	try {
 		const products = getCachedProducts();  // Получаем кэшированные продукты
-
+		
 		if (!Array.isArray(products)) {
 			console.error('❌ Ошибка: getCachedProducts() вернул некорректные данные:', products);
 			return res.status(500).json({ error: 'Ошибка сервера при обработке данных.' });
