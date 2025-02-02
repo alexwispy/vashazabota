@@ -1,0 +1,89 @@
+/* Основной контейнер для фильтра брендов */
+.brand-filter {
+	margin-bottom: 20px;
+ }
+ 
+ /* Заголовок фильтра */
+ .brand-filter__header {
+	cursor: pointer;
+	padding: 12px 16px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 400;
+	color: #333;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
+ }
+ 
+ .brand-filter__header:hover {
+	background-color: #f4f4f9;
+ }
+ 
+ /* Иконка для разворачивания */
+ .brand-filter__icon {
+	font-size: 14px;
+	color: #666;
+ }
+ 
+ /* Список брендов */
+ .brand-filter__cards {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+ }
+ 
+ /* Элемент бренда */
+ .brand-filter__item {
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	cursor: pointer;
+	font-size: 14px;
+	color: #333;
+	border-bottom: 1px solid #e5e5ea;
+	transition: background-color 0.3s ease;
+ }
+ 
+ .brand-filter__item:hover {
+	background-color: #f9f9f9;
+ }
+ 
+ /* Последний элемент без границы */
+ .brand-filter__item:last-child {
+	border-bottom: none;
+ }
+ 
+ /* Чекбокс бренда */
+ .brand-filter__checkbox {
+	margin-right: 10px;
+	width: 14px;
+	height: 14px;
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	background: #fff;
+	appearance: none;
+	cursor: pointer;
+	position: relative;
+	transition: border-color 0.2s ease;
+ }
+ 
+ .brand-filter__checkbox:checked::after {
+	content: '✓';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 12px;
+	color: #ff9900;
+ }
+ 

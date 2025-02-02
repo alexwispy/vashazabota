@@ -1,103 +1,67 @@
-/* Контейнер для фильтра категорий */
 .category-filter {
-	position: relative;
-	width: 100%;
-	margin-left: 0;
-	background-color: #fff;
-	/* Белый фон для списка элементов */
-	padding: 0;
+	margin-bottom: 20px;
 }
 
-/* Заголовок (надпись) «Категории» */
-.category-filter-header {
-	padding: 12px 16px;
+.category-filter__title {
 	font-size: 16px;
-	font-weight: 600;
-	color: #1c1c1e;
-	/* Тёмный цвет текста */
-	background-color: transparent;
-	/* Прозрачный фон */
-	border-bottom: 1px solid #e5e5ea;
+	font-weight: 500;
+	margin-bottom: 10px;
+	padding-left: 10px;
 }
 
-.category-filter h4 {
-	padding: 20px 5px 10px 10px;
-	background-color: #F4F4F9;
-}
-
-/* Основной элемент категории */
-.category-item {
+.category-filter__list {
 	cursor: pointer;
 	padding: 12px 16px;
 	background-color: #fff;
-	border-bottom: 1px solid #e5e5ea;
-	/* Лёгкое подчеркивание */
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	border: 1px solid #ddd;
+	border-radius: 5px;
 	font-size: 14px;
+	font-weight: 400;
 	color: #333;
-	transition: background-color 0.3s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* При наведении фон изменяется так же, как и у подкатегорий */
-.category-item:hover {
-	background-color: #f9f9f9;
+.category-filter__item {
+	margin-bottom: 5px;
 }
 
-/* Индикатор (например, стрелка) */
-.category-toggle-symbol {
-	font-size: 14px;
-	color: #666;
-}
-
-/* Контейнер для выпадающего списка подкатегорий */
-.subcategories {
-	display: none;
-	background-color: #fff;
-	/* Белый фон для выпадающего списка */
-}
-
-/* Отображение выпадающего списка подкатегорий при наличии класса .open */
-.subcategories.open {
-	display: block;
-}
-
-/* Элементы подкатегорий – оформление с полным подчеркиванием и смещением вправо */
-.subcategory-item {
+.category-filter__parent {
 	cursor: pointer;
-	padding: 12px 16px;
-	background-color: #fff;
-	border-bottom: 1px solid #e5e5ea;
-	/* Подчеркивание на весь блок */
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding: 10px 0;
 	font-size: 14px;
 	color: #333;
-	transition: background-color 0.3s ease;
-	margin-left: 20px;
-	/* Смещение вправо */
+	border-bottom: 1px solid #e5e5ea;
+	transition: color 0.3s ease;
 }
 
-/* Убираем нижнее подчеркивание у последнего элемента подкатегории */
-.subcategory-item:last-child {
-	border-bottom: none;
+.category-filter__parent:hover {
+	color: #000;
 }
 
-/* При наведении фон изменяется, сохраняя подчеркивание */
-.subcategory-item:hover {
-	background-color: #f9f9f9;
+.category-filter__toggle {
+	font-size: 14px;
+	color: #999;
 }
 
-/* Стили для фокуса подкатегории */
-.subcategory-item:focus,
-.subcategory-item:focus-visible {
-	outline: none;
-	background-color: #d1d1d6;
+.category-filter__subcategories {
+	padding-left: 15px;
+	margin-top: 5px;
 }
 
-/* Активное состояние подкатегории */
-.subcategory-item.active {
-	color: #fff;
+.category-filter__subitem {
+	margin-bottom: 5px;
+}
+
+.category-filter__sub {
+	cursor: pointer;
+	font-size: 14px;
+	color: #555;
+	transition: color 0.3s ease;
+}
+
+.category-filter__sub:hover {
+	color: #000;
 }

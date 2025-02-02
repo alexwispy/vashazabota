@@ -18,6 +18,7 @@ const MobileHeader = ({ onCatalogClick }) => {
 				className="mobile-header-item"
 				onClick={onCatalogClick} // Открытие боковой панели
 			>
+           
 				<FiGrid />
 				<span>Каталог</span>
 			</Link>
