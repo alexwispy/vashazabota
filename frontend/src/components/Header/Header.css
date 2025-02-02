@@ -1,112 +1,105 @@
-/* src/components/Header/Header.css */
+/* Обнуление отступов у body, чтобы header занял всю ширину экрана */
+body {
+	margin: 0;
+	padding: 0;
+	/* Остальные стили */
+}
+
+/* Шапка на всю ширину */
 .header {
+	width: 100%;
 	background-color: #f4f4f9;
-	/* светлый фон */
-	padding: 20px 0;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-	/* мягкая тень */
 }
 
+/* Контейнер в шапке, включаем nowrap */
 .header__container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 20px;
 	display: flex;
-	justify-content: space-between;
+	flex-wrap: nowrap;
+	/* Запрещаем перенос */
 	align-items: center;
+	justify-content: space-between;
+
+	width: 100%;
+	padding: 20px;
+	/* Внутренние отступы */
+	box-sizing: border-box;
 }
 
+/* Логотип (пример) */
 .header__logo {
+	white-space: nowrap;
+	/* Логотип не переносится */
 	font-size: 24px;
 	font-weight: bold;
 	color: #333;
 	text-decoration: none;
-	transition: transform 0.3s ease;
 }
 
-.header__logo:hover {
-	transform: scale(1.1);
-	/* Увеличение логотипа при наведении */
-}
-
+/* Блок навигации */
 .header__nav {
 	display: flex;
+	flex-wrap: nowrap;
+	/* Меню не переносится */
 	align-items: center;
 	gap: 20px;
+	/* Расстояние между пунктами */
 }
 
+/* Ссылки меню */
 .header__nav-links {
 	display: flex;
+	flex-wrap: nowrap;
+	/* Ссылки меню тоже без переноса */
 	gap: 20px;
 }
 
 .header__link {
+	white-space: nowrap;
+	/* Запрещаем перенос слов */
 	font-size: 16px;
 	color: #666;
 	text-decoration: none;
-	position: relative;
 }
 
-.header__link:hover {
-	color: #4f7942;
-	/* зеленый оттенок при наведении */
-}
+/* (Важный момент) 
+	 Добавьте класс header__link--catalog в JSX для ссылки «Каталог»:
+		<Link to="/products" className="header__link header__link--catalog">Каталог</Link>
+ */
 
-.header__link::after {
-	content: "";
-	position: absolute;
-	width: 100%;
-	height: 2px;
-	background-color: #4f7942;
-	/* зеленый цвет подчеркивания */
-	bottom: 0;
-	left: 0;
-	transform: scaleX(0);
-	transform-origin: bottom right;
-	transition: transform 0.3s ease-out;
-}
-
-.header__link:hover::after {
-	transform: scaleX(1);
-	transform-origin: bottom left;
-}
-
-/* Стили для корзины */
+/* Корзина */
 .header__cart {
 	display: flex;
 	align-items: center;
+	white-space: nowrap;
+	/* счетчик корзины и иконка не разъезжаются */
 }
 
-.cart-link {
-	font-size: 18px;
-	color: #666;
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-	position: relative;
-}
-
+/* Иконка корзины и счётчик */
 .cart-icon {
 	font-size: 24px;
+	margin-right: 10px;
 }
 
 .cart-count {
-	font-size: 14px;
+	position: relative;
+	top: -8px;
+	left: -12px;
 	background-color: #ff9900;
 	color: #fff;
 	border-radius: 50%;
-	padding: 5px 8px;
-	position: absolute;
-	top: -8px;
-	right: -8px;
+	padding: 2px 6px;
+	font-size: 14px;
 }
 
-.cart-link:hover {
-	color: #4f7942;
-	/* Изменение цвета при наведении */
-}
+/* ----------------------------------------------------------------
+	 МЕДИАЗАПРОС ДЛЯ СКРЫТИЯ «КАТАЛОГ» И КОРЗИНЫ ПРИ <= 1200PX
+	 ---------------------------------------------------------------- */
+@media (max-width: 1200px) {
 
-.cart-link:hover .cart-icon {
-	transform: scale(1.2);
-	/* Увеличение иконки при наведении */
+	/* Скрываем ссылку «Каталог» (нужен класс .header__link--catalog) */
+	.header__link--catalog,
+	.header__cart {
+		display: none;
+	}
 }

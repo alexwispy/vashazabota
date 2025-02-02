@@ -1,92 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './PriceFilter.css';
 
 const PriceFilter = ({ minPrice, maxPrice, onPriceChange }) => {
-	const [openPrice, setOpenPrice] = useState(false);
-	const [typingTimer, setTypingTimer] = useState(null); // Состояние для таймера
+  const [open, setOpen] = useState(false);
+  const [tempMin, setTempMin] = useState(minPrice);
+  const [tempMax, setTempMax] = useState(maxPrice);
 
-	// Функция для переключения состояния блока с ценами
-	const togglePriceBlock = () => {
-		setOpenPrice(!openPrice);  // переключаем отображение блока цен
-	};
+  const toggleOpen = () => setOpen(!open);
 
-	// Функция для обработки изменения минимальной цены
-	const handleMinPriceChange = (e) => {
-		let value = e.target.value === '' ? '' : Number(e.target.value);
+  const handleMinPriceChange = (e) => {
+    const value = e.target.value;
+    setTempMin(value);
+  };
 
-		// Устанавливаем минимальную цену
-		onPriceChange(value, maxPrice);
+  const handleMaxPriceChange = (e) => {
+    const value = e.target.value;
+    setTempMax(value);
+  };
 
-		// Очистка таймера, если ввод продолжается
-		if (typingTimer) {
-			clearTimeout(typingTimer);
-		}
+  const handleBlur = () => {
+    let min = Number(tempMin) || 0;
+    let max = Number(tempMax) || 0;
+    if (min > max) {
+      min = max;
+    }
+    onPriceChange(min, max);
+    setTempMin(min);
+    setTempMax(max);
+  };
 
-		// Устанавливаем новый таймер для проверки через 3 секунды
-		setTypingTimer(setTimeout(() => handleBlur(), 3000));
-	};
-
-	// Функция для обработки изменения максимальной цены
-	const handleMaxPriceChange = (e) => {
-		let value = e.target.value === '' ? '' : Number(e.target.value);
-
-		// Устанавливаем максимальную цену
-		onPriceChange(minPrice, value);
-
-		// Очистка таймера, если ввод продолжается
-		if (typingTimer) {
-			clearTimeout(typingTimer);
-		}
-
-		// Устанавливаем новый таймер для проверки через 3 секунды
-		setTypingTimer(setTimeout(() => handleBlur(), 3000));
-	};
-
-	// Функция для проверки и исправления значений после завершения ввода
-	const handleBlur = () => {
-		// Если минимальная цена больше максимальной, делаем максимальную цену равной минимальной
-		if (maxPrice < minPrice && maxPrice !== '') {
-			onPriceChange(minPrice, minPrice);
-		}
-	};
-
-	// Очистка таймера при размонтировании компонента или изменении значений
-	useEffect(() => {
-		return () => {
-			if (typingTimer) {
-				clearTimeout(typingTimer);
-			}
-		};
-	}, [typingTimer]);
-
-	return (
-		<div className="price-filter">
-			<div className="price-item" onClick={togglePriceBlock}>
-				<h4>Цена</h4>
-				<span className="toggle-symbol">{openPrice ? "-" : "+"}</span>
-			</div>
-			<div className={`price-inputs ${openPrice ? 'open' : ''}`}>
-				<div>
-					<input
-						type="number"
-						value={minPrice === "" ? "" : minPrice}
-						onChange={handleMinPriceChange}
-						onBlur={handleBlur} // Проверка после завершения ввода
-						placeholder="Минимальная цена"
-					/>
-				</div>
-				<div>
-					<input
-						type="number"
-						value={maxPrice === "" ? "" : maxPrice}
-						onChange={handleMaxPriceChange}
-						onBlur={handleBlur} // Проверка после завершения ввода
-						placeholder="Максимальная цена"
-					/>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="price-filter">
+      <div className="price-item" onClick={toggleOpen}>
+        <h4>Цена</h4>
+        <span className="toggle-symbol">{open ? "▲" : "▼"}</span>
+      </div>
+      <div className={`price-inputs ${open ? 'open' : ''}`}>
+        <input
+          type="number"
+          value={tempMin}
+          onChange={handleMinPriceChange}
+          onBlur={handleBlur}
+          placeholder="Мин"
+        />
+        <input
+          type="number"
+          value={tempMax}
+          onChange={handleMaxPriceChange}
+          onBlur={handleBlur}
+          placeholder="Макс"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default PriceFilter;

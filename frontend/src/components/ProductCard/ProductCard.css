@@ -11,14 +11,14 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
- }
- 
- .product-card:hover {
+}
+
+.product-card:hover {
 	transform: scale(1.05);
- }
- 
- /* Для изображения */
- .product-image {
+}
+
+/* Для изображения */
+.product-image {
 	width: 100%;
 	height: 300px;
 	background-color: #f0f0f0;
@@ -26,64 +26,73 @@
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
- }
- 
- .product-image-img {
+}
+
+.product-image-img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	border-radius: 8px;
- }
- 
- .product-info {
+}
+
+.product-info {
 	margin-top: 12px;
 	flex-grow: 1;
- }
- 
- /* Заголовок товара с фиксированной высотой и ограничением на 2 строки */
- .product-title {
-	font-size: 12px; /* Размер шрифта как раньше */
+}
+
+/* Заголовок товара с фиксированной высотой и ограничением на 2 строки */
+.product-title {
+	font-size: 12px;
+	/* Размер шрифта как раньше */
 	font-weight: bold;
 	margin: 8px 0;
 	color: #333;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: -webkit-box;
-	-webkit-line-clamp: 2; /* Ограничиваем 2 строки */
+	-webkit-line-clamp: 2;
+	/* Ограничиваем 2 строки */
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
-	min-height: 40px; /* Устанавливаем минимальную высоту для заголовка */
- }
- 
- /* Цена с фиксированной высотой */
- .product-price {
+	min-height: 40px;
+	/* Устанавливаем минимальную высоту для заголовка */
+}
+
+/* Цена с фиксированной высотой */
+.product-price {
 	font-size: 14px;
 	color: #b12704;
 	margin: 8px 0;
 	text-align: left;
-	min-height: 24px; /* Устанавливаем минимальную высоту для цены */
- }
- 
- /* Цена со скидкой */
- .product-price--sale {
-	font-size: 16px; /* Увеличиваем размер для цены со скидкой */
+	min-height: 24px;
+	/* Устанавливаем минимальную высоту для цены */
+}
+
+/* Цена со скидкой */
+.product-price--sale {
+	font-size: 16px;
+	/* Увеличиваем размер для цены со скидкой */
 	font-weight: bold;
-	color: red; /* Цвет для цены со скидкой */
-	margin-right: 8px; /* Добавляем небольшой отступ справа */
- }
- 
- /* Обычная цена, если есть скидка */
- .product-price--original {
+	color: red;
+	/* Цвет для цены со скидкой */
+	margin-right: 8px;
+	/* Добавляем небольшой отступ справа */
+}
+
+/* Обычная цена, если есть скидка */
+.product-price--original {
 	font-size: 14px;
 	text-decoration: line-through;
 	color: #888;
- }
- 
- /* Бренд с более крупным шрифтом и меньшими отступами */
- .product-brand {
-	font-size: 16px; /* Увеличиваем размер шрифта бренда */
+}
+
+/* Бренд с более крупным шрифтом и меньшими отступами */
+.product-brand {
+	font-size: 16px;
+	/* Увеличиваем размер шрифта бренда */
 	color: #555;
-	margin: 4px 0; /* Уменьшаем отступы */
-	min-height: 24px; /* Устанавливаем минимальную высоту для бренда */
- }
- 
+	margin: 4px 0;
+	/* Уменьшаем отступы */
+	min-height: 24px;
+	/* Устанавливаем минимальную высоту для бренда */
+}

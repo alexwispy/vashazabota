@@ -1,54 +1,88 @@
-/* Уникальные стили для PriceFilter */
+/* Контейнер самого фильтра */
 .price-filter {
-	padding: 20px;
-	background-color: #f9f9f9;
+	position: relative;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: transparent;
+	border: none;
+	/* Убираем все лишние рамки */
 }
 
+/* Заголовок (кликабельная часть) */
 .price-item {
 	cursor: pointer;
-	/* Указатель на кликабельный элемент */
-	padding: 10px;
+	/* Аналогично вашим brand-header.sort-header: */
+	padding: 10px 15px;
 	background-color: #fff;
 	border: 1px solid #ddd;
-	margin-bottom: 5px;
 	border-radius: 5px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 14px;
+	color: #333;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
+	margin-bottom: 0;
+	/* убираем нижний отступ, чтобы плавно прилегал к блокам ниже */
 }
 
+/* Hover-эффект, подсвечиваем фон */
 .price-item:hover {
-	background-color: #eaeaea;
+	background-color: #f4f4f9;
 }
 
+/* Заголовок внутри .price-item (убираем лишний фон/отступы) */
+.price-item h4 {
+	margin: 0;
+	background: transparent;
+}
+
+/* Иконка "▲"/"▼" */
 .toggle-symbol {
-	font-size: 18px;
+	font-size: 14px;
+	color: #666;
+	margin-left: 10px;
 }
 
+/* Блок с полями ввода, скрыт по умолчанию */
 .price-inputs {
-	padding-left: 20px;
-	margin-top: 10px;
+	margin-top: 5px;
 	display: none;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	padding: 10px;
+	/* внутренние отступы, чтобы поля не «прилипали» к краям */
 }
 
+/* Показать при открытом состоянии */
 .price-inputs.open {
 	display: block;
 }
 
+/* Стили для полей ввода */
 .price-inputs input {
 	width: 100%;
-	padding: 8px;
+	padding: 10px;
 	margin-bottom: 10px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
-	background-color: #FFFFFF; /* Белый фон для полей ввода */
+	background-color: #fff;
+	font-size: 14px;
+	color: #333;
+	box-sizing: border-box;
 }
 
+/* При фокусе лёгкое подсвечивание */
 .price-inputs input:focus {
-	border-color: #4CAF50; /* Зеленая граница при фокусе */
-	box-shadow: 0 0 5px rgba(76, 175, 80, 0.2); /* Легкое свечение при фокусе */
+	outline: none;
+	border-color: #999;
+	box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
 }
 
 .price-inputs input::placeholder {
-	color: #888; /* Цвет для текста в placeholder */
+	color: #888;
 }

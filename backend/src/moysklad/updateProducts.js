@@ -1,127 +1,140 @@
-import axios from "axios";
-import path from "path";
-import fs from "fs";
-import sharp from "sharp";
-import { getToken } from "./auth.js";
-import { fileURLToPath } from "url";
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { getToken } from './auth.js';
+import { fileURLToPath } from 'url';
 
-// ✅ Настраиваем __dirname для ES-модулей
+// Настраиваем __dirname для ES-модулей
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const imagesDirectory = path.join(__dirname, "..", "..", "public", "img");
 
-// ✅ Создаём папку для изображений, если она не существует
-if (!fs.existsSync(imagesDirectory)) {
-	fs.mkdirSync(imagesDirectory, { recursive: true });
+// Путь к файлу для сохранения ассортимента (файл будет сохранён в подпапке cache)
+const assortmentJsonPath = path.join(__dirname, './cache/assortment.json');
+
+// Проверка существования папки cache и её создание, если не существует
+if (!fs.existsSync(path.dirname(assortmentJsonPath))) {
+	fs.mkdirSync(path.dirname(assortmentJsonPath), { recursive: true });
 }
 
-// ✅ Функция ожидания (таймаут)
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const getProducts = async (token) => {
+/**
+ * Получение ассортимента с МойСклад
+ */
+const getAssortment = async () => {
+	const token = await getToken();
+	if (!token) {
+		throw new Error('Не удалось получить токен.');
+	}
 	try {
-		const response = await axios.get("https://api.moysklad.ru/api/remap/1.2/entity/assortment", {
-			headers: { Authorization: `Bearer ${token}` },
-		});
+		const response = await axios.get(
+			'https://api.moysklad.ru/api/remap/1.2/entity/assortment',
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
 		return response.data.rows;
 	} catch (error) {
-		console.error("❌ Ошибка при запросе ассортимента:", error.message);
+		console.error('Ошибка при запросе ассортимента:', error.message);
 		return [];
 	}
 };
 
-// ✅ Функция для скачивания изображения с обработкой `401` и проверкой `downloadHref`
-const downloadAndConvertImage = async (image, productId, token, attempt = 1) => {
-	const webpPath = path.join(imagesDirectory, `${productId}.webp`);
-
-	// ✅ Проверяем, есть ли файл перед отправкой запроса
-	if (fs.existsSync(webpPath)) {
-		console.log(`✅ Изображение уже есть: ${webpPath}`);
-		return;
-	}
-
-	// ✅ Пропускаем, если у изображения нет ссылки для скачивания
-	if (!image.meta.downloadHref) {
-		console.warn(`⚠ У изображения продукта ${productId} нет downloadHref, пропускаю.`);
-		return;
-	}
-
-	try {
-		console.log(`📷 [Попытка ${attempt}] Скачиваю изображение для ID ${productId}...`);
-		await delay(500); // ⏳ Увеличенная пауза перед скачиванием
-
-		const response = await axios.get(image.meta.downloadHref, {
-			headers: { Authorization: `Bearer ${token}` },
-			responseType: "arraybuffer",
-		});
-
-		await sharp(response.data).webp().toFile(webpPath);
-		console.log(`✅ Изображение сохранено: ${webpPath}`);
-	} catch (error) {
-		if (error.response?.status === 401 && attempt < 3) {
-			console.warn(`⚠ Токен истёк, запрашиваю новый (попытка ${attempt + 1})...`);
-			token = await getToken();
-			await downloadAndConvertImage(image, productId, token, attempt + 1);
-		} else {
-			console.error(`❌ Ошибка при скачивании изображения для ID ${productId}:`, error.message);
-		}
-	}
+/**
+ * Запись ассортимента в JSON файл
+ */
+const writeAssortmentToFile = (assortment) => {
+	fs.writeFileSync(assortmentJsonPath, JSON.stringify(assortment, null, 2), 'utf8');
+	console.log('Ассортимент успешно записан в файл assortment.json');
 };
 
-const updateImages = async () => {
-	let token = await getToken();
-	if (!token) {
-		console.error("❌ Не удалось получить токен.");
+/**
+ * Основная обработка ассортимента:
+ * 1. Получение ассортимента с API.
+ * 2. Формирование нового списка объектов (товаров/папок/комплектов и т.п.) с нужными полями.
+ * 3. Фильтрация — удаляем категории "услуги", "упаковка" и "комплекты" (а также их подкатегории).
+ * 4. Запись результата в файл.
+ */
+export const updateProducts = async () => {
+	console.log('Начало обработки ассортимента...');
+
+	// Получение ассортимента
+	const items = await getAssortment();
+	if (items.length === 0) {
+		console.log('Нет данных о продуктах/группах.');
 		return;
 	}
 
-	const products = await getProducts(token);
-	if (!products.length) {
-		console.log("⚠ Продукты не получены.");
-		return;
+	// Обработка ассортимента и создание списка объектов
+	const assortment = [];
+
+	for (const item of items) {
+		const {
+			id,
+			name,
+			description,
+			pathName,
+			code,
+			article,
+			barcodes,
+			quantity,
+			meta
+		} = item;
+
+		// Извлечение цен
+		const priceData =
+			item.salePrices?.find((price) => price.priceType?.name === 'Цена продажи') || {};
+		const salePriceData =
+			item.salePrices?.find((price) => price.priceType?.name === 'Цена со скидкой') || {};
+
+		// Конвертация значений цен (делим на 100, если значение указано)
+		const price = priceData.value ? priceData.value / 100 : 0;
+		const salePrice = salePriceData.value ? salePriceData.value / 100 : 0;
+
+		// Дополнительные атрибуты (если нужны)
+		const brand = item.attributes?.find((attr) => attr.name === 'Бренд')?.value || '';
+		const expirationDate = item.attributes?.find((attr) => attr.name === 'Срок годности')?.value || '';
+		const applicationMethod = item.attributes?.find((attr) => attr.name === 'Способ применения')?.value || '';
+
+		const newItem = {
+			id,
+			metaType: meta?.type || '',
+			name,
+			description: description || '',
+			price,
+			salePrice,
+			article: article || '',
+			productCategory: pathName || '',
+			brand,
+			expirationDate,
+			applicationMethod,
+			code: code || '',
+			barcodes: barcodes || [],
+			quantity: quantity || 0
+		};
+
+		assortment.push(newItem);
 	}
 
-	let requestCounter = 0;
+	// Массив категорий, которые нужно исключить
+	const exclude = ['услуги', 'упаковка', 'комплекты'];
 
-	for (const product of products) {
-		const productId = product.id;
-		const webpPath = path.join(imagesDirectory, `${productId}.webp`);
+	// Фильтруем: убираем те объекты, у которых pathName равен 
+	// или начинается с одной из категорий из exclude
+	const filteredAssortment = assortment.filter((item) => {
+		const cat = item.productCategory.toLowerCase().trim();
+		return !exclude.some(
+			(base) => cat === base || cat.startsWith(base + '/')
+		);
+	});
 
-		// ✅ Проверяем, есть ли изображение перед запросом к API
-		if (fs.existsSync(webpPath)) {
-			console.log(`✅ Изображение уже есть, пропускаем: ${webpPath}`);
-			continue;
-		}
-
-		console.log(`🔄 Запрос изображений для продукта с ID ${productId}...`);
-		await delay(500); // ✅ Пауза перед запросом к API
-
-		try {
-			const imagesResponse = await axios.get(product.images.meta.href, {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-
-			const images = imagesResponse.data.rows;
-
-			for (const image of images) {
-				await downloadAndConvertImage(image, productId, token);
-			}
-		} catch (error) {
-			console.error(`❌ Ошибка при обработке изображений продукта ${productId}:`, error.message);
-		}
-
-		// ✅ Обновляем токен каждые 3 запроса
-		requestCounter++;
-		if (requestCounter % 3 === 0) {
-			console.log("🔄 Обновляю токен...");
-			token = await getToken();
-		}
-	}
-
-	console.log("✅ Обновление изображений завершено.");
+	// Записываем отфильтрованные данные в файл assortment.json
+	writeAssortmentToFile(filteredAssortment);
 };
 
-// ✅ Запуск функции
-updateImages();
-
-export { updateImages };
+// Если данный модуль запущен напрямую, запускаем обработку ассортимента
+if (process.argv[1] === __filename) {
+	updateProducts()
+		.then(() => console.log('Обработка завершена.'))
+		.catch((error) => console.error('Ошибка при обработке ассортимента:', error));
+}

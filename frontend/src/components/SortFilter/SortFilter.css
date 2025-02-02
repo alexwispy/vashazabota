@@ -1,43 +1,80 @@
 /* Уникальные стили для SortFilter */
 .sort-filter {
-	padding: 20px;
-	background-color: #f9f9f9;
-}
-
-.sort-filter h4 {
-	margin-bottom: 10px;
-	font-size: 16px;
-	color: #333;
-}
-
-.sort-filter select {
-	width: 100%;
-	padding: 8px;
-	margin-bottom: 10px;
+	position: relative;
+	min-width: 250px;
+	margin-left: auto;
+	cursor: pointer;
+	padding: 10px 12px;
+	background-color: #fff;
 	border: 1px solid #ddd;
 	border-radius: 5px;
-	background-color: #FFFFFF; /* Белый фон для выпадающего списка */
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	font-size: 14px;
 	color: #333;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
 }
 
-.sort-filter select:focus {
-	border-color: #4CAF50; /* Зеленая граница при фокусе */
-	box-shadow: 0 0 5px rgba(76, 175, 80, 0.2); /* Легкое свечение при фокусе */
+/* Заголовок фильтра */
+.sort-header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	font-size: 14px;
+	color: #333;
+	padding: 0;
 }
 
-.sort-filter select:active {
-	border-color: #4CAF50; /* Цвет границы при активном состоянии */
+/* Треугольник (иконка раскрытия) */
+.sort-icon {
+	font-size: 14px;
+	color: #666;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
 }
 
-.sort-filter select option {
-	padding: 8px;
+/* Варианты сортировки */
+.sort-options {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 10;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	margin-top: 5px;
+	padding: 0;
+	list-style: none;
+	width: 100%;
 }
 
-.sort-filter select option:focus {
-	background-color: #eaeaea; /* Цвет фона для выбранной опции */
+/* Стили для каждого варианта сортировки */
+.sort-option {
+	padding: 10px 15px;
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+	transition: background-color 0.3s;
 }
 
-.sort-filter select option:active {
-	background-color: #eaeaea; /* Цвет фона для выбранной опции при активном состоянии */
+/* При наведении */
+.sort-option:hover {
+	background-color: #f4f4f9;
+}
+
+/* Выбранный элемент */
+.sort-option.selected {
+	background-color: #f4f4f9;
+	font-weight: bold;
+	color: #333;
 }
