@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Catalog.css';
 import ProductList from '../ProductList/ProductList';
 import Sidebar from '../Sidebar/Sidebar';
-import SidebarToggleButton from '../SidebarToggleButton/SidebarToggleButton';
 import SortFilter from '../SortFilter/SortFilter';
 import dataService from '../../services/dataService';
 
-const Catalog = () => {
+const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const sidebarRef = useRef(null);
 
-	// Состояния для данных
 	const [brands, setBrands] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [productsByBrand, setProductsByBrand] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// Фильтры
 	const [selectedBrands, setSelectedBrands] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState(null);
 	const [filterPriceMin, setFilterPriceMin] = useState('');
@@ -26,10 +25,31 @@ const Catalog = () => {
 	const fixedPriceMax = 5000;
 	const [sortOption, setSortOption] = useState('default');
 
-	// Состояния сайдбара
-	const [sidebarOpen, setSidebarOpen] = useState(false);
+	useEffect(() => {
+		const params = new URLSearchParams(location.search);
+		const categoryFromUrl = params.get('category');
+		if (categoryFromUrl) {
+			setSelectedCategory(categoryFromUrl);
+		}
+	}, [location]);
 
-	// Загрузка данных
+	// Закрытие сайдбара при клике вне его
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+				setSidebarOpen(false);
+			}
+		};
+
+		if (sidebarOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [sidebarOpen, setSidebarOpen]);
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -48,7 +68,6 @@ const Catalog = () => {
 				}, {});
 				setProductsByBrand(grouped);
 			} catch (err) {
-				console.error('Ошибка загрузки:', err);
 				setError(err.message || 'Ошибка загрузки данных');
 			} finally {
 				setLoading(false);
@@ -57,7 +76,6 @@ const Catalog = () => {
 		fetchData();
 	}, []);
 
-	// Фильтрация и сортировка
 	const filteredProducts = useMemo(() => {
 		const allProducts = Object.values(productsByBrand).flat();
 		let filtered = selectedBrands.length
@@ -66,7 +84,8 @@ const Catalog = () => {
 
 		// Фильтр по цене
 		filtered = filtered.filter(
-			(product) => (filterPriceMin === '' || product.price >= Math.max(filterPriceMin, fixedPriceMin)) &&
+			(product) =>
+				(filterPriceMin === '' || product.price >= Math.max(filterPriceMin, fixedPriceMin)) &&
 				(filterPriceMax === '' || product.price <= Math.min(filterPriceMax, fixedPriceMax))
 		);
 
@@ -79,26 +98,27 @@ const Catalog = () => {
 			);
 		}
 
-		// Разделяем товары на «в наличии» и «нет в наличии»
+		// Сортировка: сначала товары в наличии, затем пустые
 		const inStock = filtered.filter((product) => product.quantity > 0);
 		const outOfStock = filtered.filter((product) => product.quantity === 0);
 
-		// Сортировка
+		// Сортировка по выбранному параметру
 		if (sortOption === 'asc-price') inStock.sort((a, b) => a.price - b.price);
 		if (sortOption === 'desc-price') inStock.sort((a, b) => b.price - a.price);
 		if (sortOption === 'asc-name') inStock.sort((a, b) => a.name.localeCompare(b.name));
 		if (sortOption === 'desc-name') inStock.sort((a, b) => b.name.localeCompare(a.name));
 
+		// Возвращаем товары, сначала в наличии, затем пустые
 		return [...inStock, ...outOfStock];
-	}, [selectedBrands, productsByBrand, filterPriceMin, filterPriceMax, sortOption, selectedCategory]);
+	}, [selectedBrands, productsByBrand, filterPriceMin, filterPriceMax, selectedCategory, sortOption]);
 
 	if (loading) return <div>Загрузка...</div>;
 	if (error) return <div style={{ color: 'red' }}>Ошибка: {error}</div>;
 
 	return (
 		<div className="catalog-container">
-			
 			<Sidebar
+				ref={sidebarRef}
 				brands={brands}
 				categories={categories}
 				selectedBrands={selectedBrands}

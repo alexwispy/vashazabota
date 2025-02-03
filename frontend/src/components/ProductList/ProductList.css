@@ -19,6 +19,14 @@
 
 @media (max-width: 680px) {
 	.product-list {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0px;
+	}
+}
+
+@media (max-width: 390px) {
+	.product-list {
 		grid-template-columns: 1fr;
+		gap: 0px;
 	}
 }

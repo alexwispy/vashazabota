@@ -2,28 +2,39 @@ import './index.css'; // Подключаем обнуление стилей
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Импортируем маршруты
 import { YMInitializer } from 'react-yandex-metrika';
-import Header from './components/Header/Header'; // Импортируем компонент шапки
-import MobileHeader from './components/MobileHeader/MobileHeader'; // Импортируем мобильное меню
-import Footer from './components/Footer/Footer'; // Импортируем компонент футера
-import HomePage from './components/HomePage/HomePage'; // Импортируем компонент домашней страницы
+import { useState } from 'react'; // Добавлен useState для управления сайдбаром
+import Header from './components/Header/Header';
+import MobileHeader from './components/MobileHeader/MobileHeader';
+import Footer from './components/Footer/Footer';
+import HomePage from './components/HomePage/HomePage';
 import Contact from './components/Contact/Contact';
-import BrandList from './components/Catalog/Catalog'; // Импортируем каталог с брендами
-import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'; // Импортируем компонент с политикой конфиденциальности
-import PaymentRules from './components/PaymentRules/PaymentRules'; // Импортируем компонент с правилами оплаты
-import ReturnAndExchange from './components/ReturnAndExchange/ReturnAndExchange'; // Импортируем компонент с условиями возврата
-import Cart from './components/Cart/Cart'; // Импортируем компонент корзины
-import ProductDetail from './components/ProductDetails/ProductDetail'; // Импортируем компонент с деталями продукта
-import CheckoutPage from './components/CheckoutPage/CheckoutPage'; // Импортируем компонент страницы оформления заказа
+import Catalog from './components/Catalog/Catalog';
+import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy';
+import PaymentRules from './components/PaymentRules/PaymentRules';
+import ReturnAndExchange from './components/ReturnAndExchange/ReturnAndExchange';
+import Cart from './components/Cart/Cart';
+import ProductDetail from './components/ProductDetails/ProductDetail';
+import CheckoutPage from './components/CheckoutPage/CheckoutPage';
 
 function App() {
+	const [sidebarOpen, setSidebarOpen] = useState(false); // Сайдбар изначально закрыт
+
+	// Функция переключения состояния сайдбара
+	const toggleSidebar = () => {
+		setSidebarOpen((prev) => !prev);
+	};
+
 	return (
 		<Router>
 			<Header />
-			<MobileHeader /> {/* Добавляем мобильное меню */}
+			<MobileHeader onCatalogClick={toggleSidebar} /> {/* Переключение сайдбара при клике на "Каталог" */}
 			<YMInitializer accounts={[99714324]} options={{ webvisor: true, clickmap: true }} />
 			<Routes>
+				<Route
+					path="/products"
+					element={<Catalog sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+				/>
 				<Route path="/" element={<HomePage />} />
-				<Route path="/products" element={<BrandList />} />
 				<Route path="/contact" element={<Contact />} />
 				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
 				<Route path="/payment-rules" element={<PaymentRules />} />

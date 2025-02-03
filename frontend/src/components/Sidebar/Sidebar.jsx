@@ -28,37 +28,43 @@ const Sidebar = ({
 	};
 
 	return (
-		<div className={`brand-sidebar category-filter ${sidebarOpen ? 'open' : ''}`}>
-			<button className="sidebar-close" onClick={() => setSidebarOpen(false)}>✕</button>
+		<div className={`brand-sidebar ${sidebarOpen ? 'open' : ''}`}>
+			{/* Общий контейнер для всего содержимого */}
+			<div className="sidebar-wrapper">
+				{/* Кнопка очистки фильтров */}
+				<div className="sidebar-footer">
+					<button className="sidebar-clear-filters" onClick={clearFilters}>
+						Очистить фильтры
+					</button>
+				</div>
 
-			{/* Фильтр по цене */}
-			<PriceFilter
-				minPrice={priceMin}
-				maxPrice={priceMax}
-				onPriceChange={(min, max) => {
-					setPriceMin(min);
-					setPriceMax(max);
-				}}
-			/>
+				{/* Контейнер для фильтров */}
+				<div className="sidebar-content">
+					{/* Фильтр по цене */}
+					<PriceFilter
+						minPrice={priceMin}
+						maxPrice={priceMax}
+						onPriceChange={(min, max) => {
+							setPriceMin(min);
+							setPriceMax(max);
+						}}
+					/>
 
-			{/* Фильтр по брендам */}
-			<BrandFilter
-				brands={brands}
-				selectedBrands={selectedBrands}
-				setSelectedBrands={setSelectedBrands}
-			/>
+					{/* Фильтр по брендам */}
+					<BrandFilter
+						brands={brands}
+						selectedBrands={selectedBrands}
+						setSelectedBrands={setSelectedBrands}
+					/>
 
-			{/* Фильтр по категориям */}
-			<CategoryFilter
-				categories={categories}
-				selectedCategory={selectedCategory}
-				setSelectedCategory={setSelectedCategory}
-			/>
-
-			{/* Кнопка очистки фильтров */}
-			<button className="sidebar-clear-filters" onClick={clearFilters}>
-				Очистить фильтры
-			</button>
+					{/* Фильтр по категориям */}
+					<CategoryFilter
+						categories={categories}
+						selectedCategory={selectedCategory}
+						setSelectedCategory={setSelectedCategory}
+					/>
+				</div>
+			</div>
 		</div>
 	);
 };

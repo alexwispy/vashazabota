@@ -37,3 +37,28 @@ h6 {
 	font-weight: inherit;
 	font-size: inherit;
 }
+
+body,
+html {
+	margin: 0;
+	padding: 0;
+	background-color: #f9f9f9;
+	/* Светло-серый фон для всей страницы */
+	box-sizing: border-box;
+}
+
+.container,
+.footer,
+.content-wrapper,
+.sidebar {
+	box-shadow: none;
+	/* Убираем тени у других элементов */
+	background: none;
+	/* Убираем фоны, которые могут пересекаться */
+	z-index: auto;
+	/* Устанавливаем базовый z-index */
+}
+
+.container {
+	position: relative;
+}

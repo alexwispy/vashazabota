@@ -18,7 +18,7 @@
 }
 
 .sidebar-clear-filters {
-	margin-top: 20px;
+	margin-top: 0px;
 	padding: 10px 15px;
 	background-color: #ff9900;
 	color: #fff;
@@ -30,6 +30,7 @@
 	text-align: center;
 	width: 100%;
 	transition: background-color 0.3s ease;
+	margin-bottom: 10px;
 }
 
 .sidebar-clear-filters:hover {
@@ -37,6 +38,8 @@
 }
 
 @media (max-width: 1200px) {
+
+	/* Сайдбар */
 	.brand-sidebar {
 		position: fixed;
 		top: 0;
@@ -57,5 +60,23 @@
 
 	.sidebar-close {
 		display: block;
+	}
+
+	/* Прокрутка с учётом мобильного меню */
+	.brand-sidebar .sidebar-content {
+		padding-bottom: 60px; /* Учитываем высоту мобильного меню */
+	}
+
+	/* Мобильное меню */
+	.mobile-header {
+		height: 50px;
+	}
+
+	.mobile-header-item {
+		font-size: 12px;
+	}
+
+	.mobile-header-item svg {
+		font-size: 18px;
 	}
 }

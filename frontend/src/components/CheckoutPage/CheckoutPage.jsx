@@ -9,9 +9,12 @@ const CheckoutPage = () => {
 	const [name, setName] = useState('');
 	const [phone, setPhone] = useState('');
 	const [address, setAddress] = useState('');
-	const [pickup, setPickup] = useState(false); // Добавлено состояние для самовывоза
-	const [notification, setNotification] = useState(null); // Состояние для уведомления
-	const navigate = useNavigate(); // Инициализация useNavigate
+	const [pickup, setPickup] = useState(false);
+	const [notification, setNotification] = useState(null);
+	const navigate = useNavigate();
+
+	const FREE_DELIVERY_THRESHOLD = 2500; // Порог для бесплатной доставки (изменено)
+	const DELIVERY_FEE = 200; // Стоимость доставки
 
 	useEffect(() => {
 		// Загружаем данные из localStorage (если они есть)
@@ -19,110 +22,71 @@ const CheckoutPage = () => {
 		setCartItems(storedCart);
 
 		// Вычисляем общую сумму
-		const totalAmount = storedCart.reduce((total, item) => total + item.price * item.orderQuantity, 0); // Используем orderQuantity
+		const totalAmount = storedCart.reduce((total, item) => total + item.price * item.orderQuantity, 0);
 		setTotal(totalAmount);
 	}, []);
 
-	// Функция для проверки правильности номера телефона
-	const validatePhone = (phone) => {
-		const phonePattern = /^\+?[1-9]\d{1,14}$/; // Проверка формата номера
-		return phonePattern.test(phone);
-	};
-
-	// Функция для получения базового URL API
-	const getApiBaseUrl = () => {
-		const hostname = window.location.hostname;
-		const protocol = window.location.protocol;
-		const port = hostname === 'localhost' ? 3001 : 5001; // Используем порт 3001 для локального сервера и 5001 для продакшн
-
-		return `${protocol}//${hostname}:${port}`;
-	};
+	// Рассчитываем стоимость доставки (только если самовывоз не выбран)
+	const deliveryFee = !pickup && total < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0;
 
 	// Функция для обработки отправки формы
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		// Проверяем, что все поля заполнены
-		if (!name || !phone || (!pickup && !address)) { // Проверяем, если самовывоз не выбран, то адрес обязателен
-			setNotification({ message: 'Пожалуйста, заполните все поля.', type: 'error' }); // Покажем ошибку
+		if (!name || !phone || (!pickup && !address)) {
+			setNotification({ message: 'Пожалуйста, заполните все поля.', type: 'error' });
 			return;
 		}
 
-		// Убираем все нецифровые символы из номера телефона и обрабатываем, чтобы оставалось 11 цифр
-		let formattedPhone = phone.replace(/\D/g, ''); // Удаляем все символы, кроме цифр
-
-		// Убедимся, что номер состоит из 11 цифр
-		if (formattedPhone.length < 11) {
-			// Добавляем недостающие цифры
-			while (formattedPhone.length < 11) {
-				formattedPhone = '0' + formattedPhone;
-			}
-		} else if (formattedPhone.length > 11) {
-			// Обрезаем до 11 цифр
-			formattedPhone = formattedPhone.slice(0, 11);
-		}
-
-		// Проверка правильности номера телефона
-		if (!validatePhone(formattedPhone)) {
-			setNotification({ message: 'Введите корректный номер телефона.', type: 'error' });
-			return;
-		}
-
-		// Отправляем данные о заказе на сервер
 		try {
-			// Формируем массив объектов товаров с необходимыми полями
-			const products = cartItems.map(item => ({
+			// Формируем массив товаров
+			const products = cartItems.map((item) => ({
 				name: item.name,
-				quantity: item.orderQuantity, // Используем orderQuantity
+				quantity: item.orderQuantity,
 				price: item.price,
 			}));
 
-			const apiUrl = getApiBaseUrl(); // Получаем базовый URL API
+			// Добавляем доставку в заказ, если она применяется
+			if (!pickup && deliveryFee > 0) {
+				products.push({
+					name: 'Доставка',
+					quantity: 1,
+					price: DELIVERY_FEE,
+				});
+			}
 
-			// Отправляем данные заказа на сервер
-			const response = await fetch(`${apiUrl}/api/order`, {
+			const response = await fetch(`/api/order`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					name,
-					phone: formattedPhone,
-					address: pickup ? 'Самовывоз' : address, // Передаем 'Самовывоз', если выбран самовывоз
+					phone,
+					address: pickup ? 'Самовывоз' : address,
 					products,
-					total
-				}), // Передаем адрес или самовывоз в зависимости от флага
+					total: pickup ? total : total + deliveryFee, // Не добавляем доставку в total при самовывозе
+				}),
 			});
 
 			if (!response.ok) {
 				throw new Error('Ошибка при отправке данных');
 			}
 
-			// Показываем успешное уведомление
 			setNotification({ message: 'Заказ успешно оформлен!', type: 'success' });
-
-			// Очистка корзины и формы после оформления заказа
 			localStorage.removeItem('cart');
 			setCartItems([]);
 			setTotal(0);
-			setName(''); // Очищаем поле имени
-			setPhone(''); // Очищаем поле телефона
-			setAddress(''); // Очищаем поле адреса
-
-			// Через 60 секунд (1 минута) редирект на главную
-			const timer = setTimeout(() => {
-				navigate('/'); // Перенаправляем на главную страницу
-			}, 60000); // 60000 миллисекунд = 1 минута
-
-			// Возвращаем функцию для очистки таймера, если пользователь закроет уведомление
-			return () => clearTimeout(timer);
+			setName('');
+			setPhone('');
+			setAddress('');
+			setTimeout(() => navigate('/'), 60000);
 		} catch (error) {
-			setNotification({ message: 'Произошла ошибка при оформлении заказа. Попробуйте снова.', type: 'error' }); // Ошибка
+			setNotification({ message: 'Произошла ошибка при оформлении заказа. Попробуйте снова.', type: 'error' });
 		}
 	};
 
-	// Функция для закрытия уведомления
 	const handleCloseNotification = () => {
 		setNotification(null);
-		navigate('/'); // Редирект сразу после закрытия уведомления
+		navigate('/');
 	};
 
 	return (
@@ -135,12 +99,12 @@ const CheckoutPage = () => {
 					{cartItems.length === 0 ? (
 						<p>Корзина пуста</p>
 					) : (
-						cartItems.map(item => (
+						cartItems.map((item) => (
 							<div key={item.id} className="checkout-item">
 								<img src={item.image} alt={item.name} className="checkout-item-image" />
 								<div className="checkout-item-details">
 									<p>{item.name}</p>
-									<p>{item.orderQuantity} x {item.price} ₽</p> {/* Используем orderQuantity */}
+									<p>{item.orderQuantity} x {item.price} ₽</p>
 								</div>
 							</div>
 						))
@@ -149,6 +113,18 @@ const CheckoutPage = () => {
 
 				<div className="checkout-total">
 					<p><strong>Итого: </strong>{total} ₽</p>
+					
+					{/* Выводим доставку только если не выбран самовывоз */}
+					{!pickup && deliveryFee > 0 && (
+						<p>
+							Доставка: {DELIVERY_FEE} ₽. До бесплатной доставки нужно до заказать на {FREE_DELIVERY_THRESHOLD - total} ₽.
+						</p>
+					)}
+
+					{/* Выводим общую сумму только если самовывоз НЕ выбран */}
+					{!pickup && (
+						<p><strong>Общая сумма: </strong>{total + deliveryFee} ₽</p>
+					)}
 				</div>
 			</div>
 
@@ -162,7 +138,6 @@ const CheckoutPage = () => {
 						required
 					/>
 				</div>
-				{/* Переключатель для самовывоза */}
 				<div className="form-group checkbox-group">
 					<label>
 						<input
@@ -173,7 +148,6 @@ const CheckoutPage = () => {
 						Самовывоз
 					</label>
 				</div>
-				{/* Если самовывоз не выбран, показываем поле для адреса */}
 				{!pickup && (
 					<div className="form-group">
 						<label>Адрес:</label>
@@ -197,12 +171,11 @@ const CheckoutPage = () => {
 				<button type="submit" className="submit-button">Подтвердить заказ</button>
 			</form>
 
-			{/* Отображение уведомлений */}
 			{notification && (
 				<Notification
 					message={notification.message}
 					type={notification.type}
-					onClose={handleCloseNotification} // Добавим обработчик для закрытия уведомления
+					onClose={handleCloseNotification}
 				/>
 			)}
 		</div>
