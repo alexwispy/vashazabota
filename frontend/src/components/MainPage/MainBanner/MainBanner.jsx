@@ -12,9 +12,9 @@ const MainBanner = () => {
 				/>
 			</div>
 			<div className="main-banner__content">
-				<h1 className="main-banner__title">Скидки на корейскую косметику!</h1>
+				<h1 className="main-banner__title">Скидки на косметику!</h1>
 				<p className="main-banner__subtitle">
-					Только в феврале - скидки до 30% на популярные товары из Таиланда.
+					Только в феврале - скидки до 30% на популярные товары.
 				</p>
 				<a href="/products?category=Распродажа" className="main-banner__button">
 					Посмотреть товары

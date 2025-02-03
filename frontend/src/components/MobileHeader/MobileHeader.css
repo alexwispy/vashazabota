@@ -4,18 +4,16 @@
 	left: 0;
 	width: 100%;
 	background-color: #fff;
-	/* Четкий белый фон */
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
 	height: 60px;
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-	/* Легкая тень сверху */
 	border-top: 1px solid #ddd;
-	/* Разделительная линия */
 	z-index: 1100;
-	/* Всегда выше других элементов */
 	padding: 0 10px;
+	overflow: hidden;
+	/* Предотвращаем выход за границы */
 }
 
 .mobile-header-item {
@@ -28,42 +26,39 @@
 	font-weight: 500;
 	text-decoration: none;
 	color: #444;
-	/* Основной цвет текста */
 	transition: color 0.3s ease, transform 0.2s ease;
+	/* Добавляем плавное масштабирование */
 	padding: 5px;
+	position: relative;
+	max-width: 80px;
+	/* Ограничиваем ширину кнопки */
 }
 
 .mobile-header-item:hover {
-	color: #ff9900;
-	/* Оранжевый цвет при наведении */
-	transform: translateY(-2px);
-	/* Легкий эффект поднятия */
+	transform: scale(1.1);
+	/* Увеличиваем всю кнопку */
 }
 
 .mobile-header-item svg {
 	font-size: 24px;
-	/* Размер иконок */
 	margin-bottom: 4px;
 	transition: transform 0.3s ease;
 }
 
 .mobile-header-item:hover svg {
-	transform: scale(1.1);
-	/* Увеличение иконки при наведении */
+	transform: scale(1.2);
+	/* Увеличиваем только иконку */
 }
 
-/* Убираем мобильное меню на больших экранах */
 @media (min-width: 1200px) {
 	.mobile-header {
 		display: none;
 	}
 }
 
-/* Адаптация для небольших экранов */
 @media (max-width: 480px) {
 	.mobile-header {
 		height: 50px;
-		/* Уменьшенная высота для маленьких экранов */
 	}
 
 	.mobile-header-item {

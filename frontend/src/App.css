@@ -1,0 +1,42 @@
+/* Обнуление отступов и базовые стили */
+body,
+html {
+	min-height: 100vh;
+	/* Устанавливаем минимальную высоту для страницы */
+	display: flex;
+	flex-direction: column;
+	/* Колонка для расположения элементов */
+}
+
+/* Главный контейнер приложения */
+.app-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	/* Растягивает содержимое на всю доступную высоту */
+}
+
+/* Основное содержимое */
+.main-content {
+	flex: 1;
+	/* Занимает всё доступное пространство между хедером и футером */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* Центрирует элементы горизонтально (опционально) */
+	justify-content: center;
+	/* Центрирует элементы вертикально (опционально) */
+}
+
+#root,
+.app {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	/* Высота на весь экран */
+}
+
+.content {
+	flex: 1;
+	/* Растягиваем основной контент */
+}

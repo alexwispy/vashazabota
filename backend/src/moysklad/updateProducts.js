@@ -1,74 +1,121 @@
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-import { getToken } from './auth.js';
+import { getToken } from './auth.js'; // Предполагаем, что эта функция возвращает актуальный токен
 import { fileURLToPath } from 'url';
 
 // Настраиваем __dirname для ES-модулей
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Путь к файлу для сохранения ассортимента (файл будет сохранён в подпапке cache)
+// Пути к файлам для сохранения ассортимента (сырые данные + обработанные)
+const rawAssortmentPath = path.join(__dirname, './cache/rawAssortment.json');
 const assortmentJsonPath = path.join(__dirname, './cache/assortment.json');
 
 // Проверка существования папки cache и её создание, если не существует
-if (!fs.existsSync(path.dirname(assortmentJsonPath))) {
-	fs.mkdirSync(path.dirname(assortmentJsonPath), { recursive: true });
+for (const p of [rawAssortmentPath, assortmentJsonPath]) {
+	const dir = path.dirname(p);
+	if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir, { recursive: true });
+	}
+}
+
+/** 
+ * Пауза в миллисекундах
+ * (5 сек = 5000 ms)
+ */
+function delay(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
- * Получение ассортимента с МойСклад
+ * Запрашивает ассортимент одним "листом" (limit=50, offset=…),
+ * всегда используя FRESH token.
  */
-const getAssortment = async () => {
+async function fetchOnePage(offset, limit) {
+	// При каждом запросе заново получаем токен
 	const token = await getToken();
 	if (!token) {
-		throw new Error('Не удалось получить токен.');
+		throw new Error('Не удалось получить токен перед запросом.');
 	}
-	try {
-		const response = await axios.get(
-			'https://api.moysklad.ru/api/remap/1.2/entity/assortment',
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}
-		);
-		return response.data.rows;
-	} catch (error) {
-		console.error('Ошибка при запросе ассортимента:', error.message);
-		return [];
-	}
-};
+
+	const url = `https://api.moysklad.ru/api/remap/1.2/entity/assortment?limit=${limit}&offset=${offset}`;
+	console.log(`Запрашиваем ассортимент: limit=${limit}, offset=${offset}`);
+
+	const response = await axios.get(url, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const rows = response.data.rows || [];
+	return rows;
+}
 
 /**
- * Запись ассортимента в JSON файл
+ * Получаем ВСЁ, загружая по 50, с паузой 5с,
+ * и перед каждым запросом просим свежий токен.
  */
-const writeAssortmentToFile = (assortment) => {
-	fs.writeFileSync(assortmentJsonPath, JSON.stringify(assortment, null, 2), 'utf8');
-	console.log('Ассортимент успешно записан в файл assortment.json');
-};
+async function getAllAssortment() {
+	let allItems = [];
+	let offset = 0;
+	const limit = 50;
+	let hasMore = true;
+
+	while (hasMore) {
+		let rows = [];
+
+		try {
+			rows = await fetchOnePage(offset, limit);
+		} catch (error) {
+			console.error('Ошибка при запросе ассортимента:', error.message);
+			break;
+		}
+
+		allItems = allItems.concat(rows);
+
+		if (rows.length < limit) {
+			hasMore = false;
+		} else {
+			offset += limit;
+			// Пауза 5 секунд
+			await delay(5000);
+		}
+	}
+
+	console.log(`Всего загружено позиций: ${allItems.length}`);
+	return allItems;
+}
+
+/** Записываем JSON в файл */
+function writeJsonToFile(filepath, data, label = '') {
+	fs.writeFileSync(filepath, JSON.stringify(data, null, 2), 'utf8');
+	console.log(`${label} успешно записан в файл: ${path.basename(filepath)}`);
+}
 
 /**
- * Основная обработка ассортимента:
- * 1. Получение ассортимента с API.
- * 2. Формирование нового списка объектов (товаров/папок/комплектов и т.п.) с нужными полями.
- * 3. Фильтрация — удаляем категории "услуги", "упаковка" и "комплекты" (а также их подкатегории).
- * 4. Запись результата в файл.
+ * Основная функция:
+ * 1. Перед КАЖДЫМ запросом получаем свежий токен
+ * 2. Грузим по 50 записей
+ * 3. Пауза 5с
+ * 4. Сохраняем сырые данные в rawAssortment.json
+ * 5. Фильтруем "услуги", "упаковка", "комплекты" (точное совпадение)
+ * 6. Сохраняем в assortment.json
  */
 export const updateProducts = async () => {
-	console.log('Начало обработки ассортимента...');
+	console.log('Начало обработки ассортимента (limit=50, пауза=5с, перед каждым запросом новый токен)...');
 
-	// Получение ассортимента
-	const items = await getAssortment();
-	if (items.length === 0) {
+	const rawItems = await getAllAssortment();
+	if (rawItems.length === 0) {
 		console.log('Нет данных о продуктах/группах.');
 		return;
 	}
 
-	// Обработка ассортимента и создание списка объектов
-	const assortment = [];
+	// Сохраняем сырые данные
+	writeJsonToFile(rawAssortmentPath, rawItems, 'Сырые данные');
 
-	for (const item of items) {
+	// Преобразуем в удобный формат
+	const assortment = [];
+	for (const item of rawItems) {
 		const {
 			id,
 			name,
@@ -81,25 +128,19 @@ export const updateProducts = async () => {
 			meta
 		} = item;
 
-		// Извлечение цен
-		const priceData =
-			item.salePrices?.find((price) => price.priceType?.name === 'Цена продажи') || {};
-		const salePriceData =
-			item.salePrices?.find((price) => price.priceType?.name === 'Цена со скидкой') || {};
-
-		// Конвертация значений цен (делим на 100, если значение указано)
+		const priceData = item.salePrices?.find((p) => p.priceType?.name === 'Цена продажи') || {};
+		const salePriceData = item.salePrices?.find((p) => p.priceType?.name === 'Цена со скидкой') || {};
 		const price = priceData.value ? priceData.value / 100 : 0;
 		const salePrice = salePriceData.value ? salePriceData.value / 100 : 0;
 
-		// Дополнительные атрибуты (если нужны)
 		const brand = item.attributes?.find((attr) => attr.name === 'Бренд')?.value || '';
 		const expirationDate = item.attributes?.find((attr) => attr.name === 'Срок годности')?.value || '';
 		const applicationMethod = item.attributes?.find((attr) => attr.name === 'Способ применения')?.value || '';
 
-		const newItem = {
+		assortment.push({
 			id,
 			metaType: meta?.type || '',
-			name,
+			name: name || '',
 			description: description || '',
 			price,
 			salePrice,
@@ -111,28 +152,19 @@ export const updateProducts = async () => {
 			code: code || '',
 			barcodes: barcodes || [],
 			quantity: quantity || 0
-		};
-
-		assortment.push(newItem);
+		});
 	}
 
-	// Массив категорий, которые нужно исключить
 	const exclude = ['услуги', 'упаковка', 'комплекты'];
-
-	// Фильтруем: убираем те объекты, у которых pathName равен 
-	// или начинается с одной из категорий из exclude
 	const filteredAssortment = assortment.filter((item) => {
 		const cat = item.productCategory.toLowerCase().trim();
-		return !exclude.some(
-			(base) => cat === base || cat.startsWith(base + '/')
-		);
+		return !exclude.includes(cat);
 	});
 
-	// Записываем отфильтрованные данные в файл assortment.json
-	writeAssortmentToFile(filteredAssortment);
+	writeJsonToFile(assortmentJsonPath, filteredAssortment, 'Обработанные данные');
+	console.log('Обработка завершена. Всего позиций:', filteredAssortment.length);
 };
 
-// Если данный модуль запущен напрямую, запускаем обработку ассортимента
 if (process.argv[1] === __filename) {
 	updateProducts()
 		.then(() => console.log('Обработка завершена.'))

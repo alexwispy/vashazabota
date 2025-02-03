@@ -30,8 +30,9 @@ const Footer = () => {
 				<div className="footer__links">
 					<Link to="/privacy-policy">Политика конфиденциальности</Link>
 					<Link to="/payment-rules">Правила оплаты</Link>
-					<Link to="/return-and-exchange">Условия обмена и возврата</Link>
+					<Link to="/return-and-exchange" className="nowrap">Условия обмена и возврата</Link>
 				</div>
+
 			</div>
 		</footer>
 	);

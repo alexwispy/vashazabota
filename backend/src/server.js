@@ -10,6 +10,8 @@ import getBrands from './routes/getBrands.js';
 import getCategories from './routes/getCategories.js';
 import { sendOrderNotification } from './bot.js';
 import imageRouter from './routes/imageRoute.js';
+import sitemapRouter from './routes/sitemap.js';
+import robotsRouter from './routes/robots.js';
 
 const app = express();
 
@@ -26,6 +28,12 @@ app.use(cors({
 	},
 	credentials: true, // Если нужно передавать куки
 }));
+
+// Добавляем маршрут для robots.txt
+app.use('/', robotsRouter);
+
+// Для генерации Sitemap
+app.use('/', sitemapRouter);
 
 // Для парсинга JSON в теле запроса
 app.use(express.json());

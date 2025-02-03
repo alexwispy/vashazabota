@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiHome, FiShoppingCart, FiGrid } from 'react-icons/fi';
-import './MobileHeader.css';
+import { useCart } from '../CartContext/CartContext'; // Подключаем глобальное состояние корзины
+import './MobileHeader.css'; // Импортируем стили для mobile-header
 
 const MobileHeader = ({ onCatalogClick }) => {
 	const navigate = useNavigate();
+	const { cartItemCount } = useCart(); // Подключаем счетчик товаров в корзине
 
 	const handleCatalogClick = (e) => {
 		e.preventDefault();
@@ -27,6 +29,7 @@ const MobileHeader = ({ onCatalogClick }) => {
 			<button className="mobile-header-item" onClick={() => navigate('/cart')}>
 				<FiShoppingCart />
 				<span>Корзина</span>
+				{cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>} {/* Показываем счетчик */}
 			</button>
 		</nav>
 	);

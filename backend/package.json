@@ -17,7 +17,12 @@
 		"cors": "^2.8.5",
 		"express": "^4.21.2",
 		"node-telegram-bot-api": "^0.66.0",
+		"punycode": "^2.3.1",
 		"sharp": "^0.33.5",
+		"transliteration": "^2.3.5",
 		"uuid": "^11.0.5"
+	},
+	"devDependencies": {
+		"@types/punycode": "^2.1.4"
 	}
 }

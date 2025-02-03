@@ -1,8 +1,9 @@
-import './index.css'; // Подключаем обнуление стилей
+import './index.css';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Импортируем маршруты
 import { YMInitializer } from 'react-yandex-metrika';
-import { useState } from 'react'; // Добавлен useState для управления сайдбаром
+import { useState } from 'react'; // useState для управления сайдбаром
+import { CartProvider } from './components/CartContext/CartContext'; // Оставляем только CartProvider
 import Header from './components/Header/Header';
 import MobileHeader from './components/MobileHeader/MobileHeader';
 import Footer from './components/Footer/Footer';
@@ -17,7 +18,8 @@ import ProductDetail from './components/ProductDetails/ProductDetail';
 import CheckoutPage from './components/CheckoutPage/CheckoutPage';
 
 function App() {
-	const [sidebarOpen, setSidebarOpen] = useState(false); // Сайдбар изначально закрыт
+	// Состояние сайдбара
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 
 	// Функция переключения состояния сайдбара
 	const toggleSidebar = () => {
@@ -25,26 +27,32 @@ function App() {
 	};
 
 	return (
-		<Router>
-			<Header />
-			<MobileHeader onCatalogClick={toggleSidebar} /> {/* Переключение сайдбара при клике на "Каталог" */}
-			<YMInitializer accounts={[99714324]} options={{ webvisor: true, clickmap: true }} />
-			<Routes>
-				<Route
-					path="/products"
-					element={<Catalog sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-				/>
-				<Route path="/" element={<HomePage />} />
-				<Route path="/contact" element={<Contact />} />
-				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
-				<Route path="/payment-rules" element={<PaymentRules />} />
-				<Route path="/return-and-exchange" element={<ReturnAndExchange />} />
-				<Route path="/cart" element={<Cart />} />
-				<Route path="/products/:id" element={<ProductDetail />} />
-				<Route path="/checkout" element={<CheckoutPage />} />
-			</Routes>
-			<Footer />
-		</Router>
+		<CartProvider>
+			<div className="app"> {/* Добавляем класс app */}
+				<Router>
+					<Header />
+					<MobileHeader onCatalogClick={toggleSidebar} />
+					<YMInitializer accounts={[99714324]} options={{ webvisor: true, clickmap: true }} />
+					<main className="content"> {/* Основной контент */}
+						<Routes>
+							<Route
+								path="/products"
+								element={<Catalog sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+							/>
+							<Route path="/" element={<HomePage />} />
+							<Route path="/contact" element={<Contact />} />
+							<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+							<Route path="/payment-rules" element={<PaymentRules />} />
+							<Route path="/return-and-exchange" element={<ReturnAndExchange />} />
+							<Route path="/cart" element={<Cart />} />
+							<Route path="/products/:id" element={<ProductDetail />} />
+							<Route path="/checkout" element={<CheckoutPage />} />
+						</Routes>
+					</main>
+					<Footer />
+				</Router>
+			</div>
+		</CartProvider>
 	);
 }
 

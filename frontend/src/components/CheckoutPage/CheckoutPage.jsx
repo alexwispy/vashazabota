@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './CheckoutPage.css'; // Стили для страницы оформления заказа
-import Notification from '../Notification/Notification'; // Импортируем компонент уведомлений
-import { useNavigate } from 'react-router-dom'; // Используем useNavigate вместо useHistory
+import './CheckoutPage.css';
+import Notification from '../Notification/Notification';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../CartContext/CartContext';
 
 const CheckoutPage = () => {
 	const [cartItems, setCartItems] = useState([]);
@@ -12,24 +13,22 @@ const CheckoutPage = () => {
 	const [pickup, setPickup] = useState(false);
 	const [notification, setNotification] = useState(null);
 	const navigate = useNavigate();
+	const { clearCart } = useCart();
 
-	const FREE_DELIVERY_THRESHOLD = 2500; // Порог для бесплатной доставки (изменено)
+	const FREE_DELIVERY_THRESHOLD = 2500; // Порог для бесплатной доставки
 	const DELIVERY_FEE = 200; // Стоимость доставки
 
 	useEffect(() => {
-		// Загружаем данные из localStorage (если они есть)
 		const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
 		setCartItems(storedCart);
 
-		// Вычисляем общую сумму
 		const totalAmount = storedCart.reduce((total, item) => total + item.price * item.orderQuantity, 0);
 		setTotal(totalAmount);
 	}, []);
 
-	// Рассчитываем стоимость доставки (только если самовывоз не выбран)
 	const deliveryFee = !pickup && total < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0;
+	const remainingForFreeDelivery = FREE_DELIVERY_THRESHOLD - total > 0 ? FREE_DELIVERY_THRESHOLD - total : 0;
 
-	// Функция для обработки отправки формы
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
@@ -39,14 +38,12 @@ const CheckoutPage = () => {
 		}
 
 		try {
-			// Формируем массив товаров
 			const products = cartItems.map((item) => ({
 				name: item.name,
 				quantity: item.orderQuantity,
 				price: item.price,
 			}));
 
-			// Добавляем доставку в заказ, если она применяется
 			if (!pickup && deliveryFee > 0) {
 				products.push({
 					name: 'Доставка',
@@ -63,7 +60,7 @@ const CheckoutPage = () => {
 					phone,
 					address: pickup ? 'Самовывоз' : address,
 					products,
-					total: pickup ? total : total + deliveryFee, // Не добавляем доставку в total при самовывозе
+					total: pickup ? total : total + deliveryFee,
 				}),
 			});
 
@@ -72,7 +69,7 @@ const CheckoutPage = () => {
 			}
 
 			setNotification({ message: 'Заказ успешно оформлен!', type: 'success' });
-			localStorage.removeItem('cart');
+			clearCart();
 			setCartItems([]);
 			setTotal(0);
 			setName('');
@@ -112,19 +109,16 @@ const CheckoutPage = () => {
 				</div>
 
 				<div className="checkout-total">
-					<p><strong>Итого: </strong>{total} ₽</p>
-					
-					{/* Выводим доставку только если не выбран самовывоз */}
+
 					{!pickup && deliveryFee > 0 && (
 						<p>
-							Доставка: {DELIVERY_FEE} ₽. До бесплатной доставки нужно до заказать на {FREE_DELIVERY_THRESHOLD - total} ₽.
+							<strong>Доставка: </strong>{DELIVERY_FEE} ₽{' '}
+							<span>(До бесплатной доставки: {remainingForFreeDelivery} ₽)</span>
 						</p>
 					)}
-
-					{/* Выводим общую сумму только если самовывоз НЕ выбран */}
-					{!pickup && (
-						<p><strong>Общая сумма: </strong>{total + deliveryFee} ₽</p>
-					)}
+					<p>
+						<strong>Итого: </strong>{total + deliveryFee} ₽
+					</p>
 				</div>
 			</div>
 

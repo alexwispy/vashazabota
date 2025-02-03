@@ -2,6 +2,7 @@
 .sort-filter {
 	position: relative;
 	min-width: 250px;
+	max-width: 50%; /* Ограничиваем ширину кнопки до 50% экрана */
 	margin-left: auto;
 	cursor: pointer;
 	padding: 10px 12px;
@@ -15,6 +16,7 @@
 	color: #333;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	transition: background-color 0.3s ease;
+	box-sizing: border-box;
 }
 
 /* Заголовок фильтра */
@@ -77,4 +79,21 @@
 	background-color: #f4f4f9;
 	font-weight: bold;
 	color: #333;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+	.sort-filter {
+		min-width: 200px; /* Уменьшаем минимальную ширину на маленьких экранах */
+		font-size: 12px; /* Уменьшаем размер шрифта для экономии пространства */
+		padding: 8px 10px; /* Уменьшаем внутренние отступы */
+	}
+}
+
+@media (max-width: 480px) {
+	.sort-filter {
+		min-width: 150px; /* Еще меньше на самых узких экранах */
+		font-size: 11px;
+		padding: 6px 8px;
+	}
 }

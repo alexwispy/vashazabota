@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
+import { useCart } from '../CartContext/CartContext'; // Используем глобальное состояние корзины
 import './Cart.css';
 
 function Cart() {
   const navigate = useNavigate(); // Создаем экземпляр navigate
+  const { updateCartCount } = useCart(); // Подключаем updateCartCount из контекста
 
   // Загружаем корзину из локального хранилища
   const [cartItems, setCartItems] = useState(() => {
@@ -11,11 +13,17 @@ function Cart() {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  // Функция для обновления глобального состояния корзины
+  const updateCartState = (updatedCart) => {
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем localStorage
+    updateCartCount(); // Обновляем глобальное состояние корзины
+  };
+
   // Функция для удаления товара из корзины
   const removeItem = (id) => {
     const updatedCart = cartItems.filter(item => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
+    updateCartState(updatedCart);
   };
 
   // Функция для увеличения количества товара в корзине
@@ -26,8 +34,7 @@ function Cart() {
       }
       return item;
     });
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
+    updateCartState(updatedCart);
   };
 
   // Функция для уменьшения количества товара в корзине
@@ -35,14 +42,8 @@ function Cart() {
     const updatedCart = cartItems.map(item => 
       item.id === id && item.orderQuantity > 1 ? { ...item, orderQuantity: item.orderQuantity - 1 } : item
     );
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart)); // Обновляем корзину в локальном хранилище
+    updateCartState(updatedCart);
   };
-
-  // Обновляем локальное хранилище каждый раз, когда cartItems изменяется
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
 
   // Обработчик перехода на страницу оформления заказа
   const handleCheckout = () => {

@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /login/
+Disallow: /register/
+Allow: /products/
+Allow: /contact/
+Allow: /privacy-policy/
+Allow: /payment-rules/
+Allow: /return-and-exchange/
+
+Sitemap: https://vashazabota.ru/
