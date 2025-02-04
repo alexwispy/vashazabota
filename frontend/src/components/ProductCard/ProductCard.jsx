@@ -7,16 +7,14 @@ const ProductCard = ({ product }) => {
 	const navigate = useNavigate();
 	const [imageError, setImageError] = useState(false);
 
+	// API всегда работает на порту 5001
 	const getApiBaseUrl = () => {
 		const hostname = window.location.hostname;
 		const protocol = window.location.protocol;
-		const port = hostname === 'localhost' ? 3001 : 5001; // Используем порт 3001 для локального сервера и 5001 для продакшн
-
-		return `${protocol}//${hostname}:${port}`;
+		return `${protocol}//${hostname}:5001`;
 	};
 
 	const handleImageClick = () => {
-		const imageSrc = imageError ? '/images/products/default-image.webp' : `${getApiBaseUrl()}/images/${product.id}.webp`;
 		navigate(`/products/${product.id}`, { state: { product, image: imageSrc } });
 	};
 
@@ -29,8 +27,9 @@ const ProductCard = ({ product }) => {
 
 	const imageSrc = imageError ? defaultImage : productImage;
 
-	const price = product.salePrice ? `${product.salePrice} ₽` : (product.price ? `${product.price} ₽` : 'Цена не указана');
-	const originalPrice = product.price && product.salePrice ? `${product.price} ₽` : null;
+	// Оптимизировано отображение цены
+	const price = product.salePrice || product.price ? `${product.salePrice || product.price} ₽` : 'Цена не указана';
+	const originalPrice = product.salePrice && product.price ? `${product.price} ₽` : null;
 
 	return (
 		<div className="product-card">
@@ -46,7 +45,7 @@ const ProductCard = ({ product }) => {
 			<div className="product-info">
 				<h3 className="product-title">{product.name}</h3>
 				<p className="product-price">
-					{product.salePrice && originalPrice ? (
+					{product.salePrice && product.price ? (
 						<>
 							<span className="product-price--sale">{price}</span>
 							<span className="product-price--original">{originalPrice}</span>

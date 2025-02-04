@@ -1,8 +1,8 @@
 import express from 'express';
-import fs from 'fs';
 import cors from 'cors';
 import http from 'http';
-import https from 'https';
+import compression from 'compression'; // Подключаем Gzip-сжатие
+
 import getProducts from './routes/getProducts.js';
 import getProductById from './routes/getProductById.js';
 import getProductsByBrand from './routes/getProductsByBrand.js';
@@ -15,8 +15,11 @@ import robotsRouter from './routes/robots.js';
 
 const app = express();
 
-// Разрешаем CORS
-const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001', 'http://localhost:3000'];
+// Включаем GZIP-сжатие
+app.use(compression());
+
+// Разрешаем CORS для фронтенда
+const allowedOrigins = ['https://vashazabota.ru', 'http://localhost:3000'];
 
 app.use(cors({
 	origin: (origin, callback) => {
@@ -26,50 +29,40 @@ app.use(cors({
 			callback(new Error('Not allowed by CORS'));
 		}
 	},
-	credentials: true, // Если нужно передавать куки
+	credentials: true,
 }));
 
-// Добавляем маршрут для robots.txt
-app.use('/', robotsRouter);
+// Логируем входящие запросы
+app.use((req, res, next) => {
+	console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+	next();
+});
 
-// Для генерации Sitemap
+// Добавляем маршруты для robots.txt и sitemap.xml
+app.use('/', robotsRouter);
 app.use('/', sitemapRouter);
 
-// Для парсинга JSON в теле запроса
+// Парсим JSON
 app.use(express.json());
 
-// Эндпоинт для получения всех продуктов
+// Эндпоинты API
 app.get('/api/products', getProducts);
-
-// Эндпоинт для получения продукта по ID
 app.get('/api/products/:id', getProductById);
-
-// Эндпоинт для получения товаров по бренду
 app.get('/api/products/brand/:brand', getProductsByBrand);
-
-// Эндпоинт для получения всех брендов
 app.get('/api/brands', getBrands);
-
-// Эндпоинт для получения категорий
 app.get('/api/categories', getCategories);
-
-// Эндпоинт для обслуживания изображений
 app.use('/images', imageRouter);
 
 // Эндпоинт для создания заказа
 app.post('/api/order', async (req, res) => {
 	const { name, phone, address, products, total } = req.body;
 
-	// Валидация обязательных полей
 	if (!name || !phone || !address || !products || !total) {
 		return res.status(400).send('Пожалуйста, заполните все поля!');
 	}
 
 	try {
-		// Отправка уведомления через бота
 		await sendOrderNotification(name, phone, address, products, total);
-
-		// Ответ клиенту
 		res.status(200).send('Заказ принят и уведомление отправлено.');
 	} catch (error) {
 		console.error('Ошибка при отправке уведомления:', error);
@@ -77,31 +70,10 @@ app.post('/api/order', async (req, res) => {
 	}
 });
 
-// Порты для локальной и продакшн-среды
-const args = process.argv.slice(2);
-const useHttps = args.includes('--https');
-const httpPort = useHttps ? 5000 : 3001;   // Порт для HTTP
-const httpsPort = useHttps ? 5001 : 3001; // Порт для HTTPS
+// ✅ Фиксированный порт для Nginx-проксирования
+const PORT = 5001;
 
-if (useHttps) {
-	// Настройки SSL для продакшн-среды
-	const sslOptions = {
-		key: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/privkey.pem'),
-		cert: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/fullchain.pem')
-	};
-
-	// Создание HTTPS сервера для продакшн
-	https.createServer(sslOptions, app).listen(httpsPort, () => {
-		console.log(`HTTPS сервер работает на порту ${httpsPort}`);
-	});
-
-	// Создание HTTP сервера и перенаправление на HTTPS
-	http.createServer(app).listen(httpPort, () => {
-		console.log(`HTTP сервер работает на порту ${httpPort}`);
-	});
-} else {
-	// Создание HTTP сервера для локальной среды
-	http.createServer(app).listen(httpPort, () => {
-		console.log(`HTTP сервер работает на порту ${httpPort}`);
-	});
-}
+// Запускаем HTTP-сервер (Nginx будет проксировать запросы)
+http.createServer(app).listen(PORT, () => {
+	console.log(`✅ API сервер запущен на порту ${PORT}`);
+});

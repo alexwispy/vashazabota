@@ -1,9 +1,10 @@
-// Функция для получения базового URL API
+// Функция для получения базового URL API (всегда на 5001)
 const getApiBaseUrl = () => {
 	const hostname = window.location.hostname;
 	const protocol = window.location.protocol;
-	const isProduction = hostname === 'vashazabota.ru';
-	const apiPort = isProduction ? 5001 : 3000; // Указываем порты для продакшн и локальной среды
+
+	// Продакшен всегда использует порт 5001
+	const apiPort = 5001;
 
 	// Формируем URL с учетом порта
 	return `${protocol}//${hostname}:${apiPort}`;
@@ -42,7 +43,6 @@ const fetchProductsFromServer = async () => {
 		}
 
 		const data = await response.json();
-		console.log('Response Data:', data); // Логируем полученные данные
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении данных с сервера:', error);
@@ -61,7 +61,6 @@ const fetchProductByIdFromServer = async (id) => {
 		}
 
 		const data = await response.json();
-		console.log('Product Data:', data); // Логируем данные продукта
 		return data;
 	} catch (error) {
 		console.error('Ошибка при получении данных о продукте:', error);
