@@ -1,8 +1,8 @@
 import express from 'express';
+import https from 'https';
+import fs from 'fs';
 import cors from 'cors';
-import http from 'http';
-import compression from 'compression'; // Подключаем Gzip-сжатие
-
+import compression from 'compression';
 import getProducts from './routes/getProducts.js';
 import getProductById from './routes/getProductById.js';
 import getProductsByBrand from './routes/getProductsByBrand.js';
@@ -11,7 +11,6 @@ import getCategories from './routes/getCategories.js';
 import { sendOrderNotification } from './bot.js';
 import imageRouter from './routes/imageRoute.js';
 import sitemapRouter from './routes/sitemap.js';
-import robotsRouter from './routes/robots.js';
 
 const app = express();
 
@@ -19,7 +18,23 @@ const app = express();
 app.use(compression());
 
 // Разрешаем CORS для фронтенда
-const allowedOrigins = ['https://vashazabota.ru', 'http://localhost:3000'];
+const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001'];
+
+app.options('/api/*', (req, res) => {
+	res.header('Access-Control-Allow-Origin', 'https://vashazabota.ru');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+	res.header('Access-Control-Allow-Credentials', 'true');
+	res.sendStatus(204);
+});
+
+app.options('/api/*', (req, res) => {
+	res.header('Access-Control-Allow-Origin', 'https://vashazabota.ru');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+	res.header('Access-Control-Allow-Credentials', 'true');
+	res.sendStatus(204);
+});
 
 app.use(cors({
 	origin: (origin, callback) => {
@@ -38,10 +53,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-// Добавляем маршруты для robots.txt и sitemap.xml
-app.use('/', robotsRouter);
-app.use('/', sitemapRouter);
-
 // Парсим JSON
 app.use(express.json());
 
@@ -51,7 +62,12 @@ app.get('/api/products/:id', getProductById);
 app.get('/api/products/brand/:brand', getProductsByBrand);
 app.get('/api/brands', getBrands);
 app.get('/api/categories', getCategories);
+
+// Эндпоинты для изображений и статических файлов
 app.use('/images', imageRouter);
+
+// Маршрут sitemap.xml
+app.use('/', sitemapRouter);
 
 // Эндпоинт для создания заказа
 app.post('/api/order', async (req, res) => {
@@ -70,10 +86,14 @@ app.post('/api/order', async (req, res) => {
 	}
 });
 
-// ✅ Фиксированный порт для Nginx-проксирования
-const PORT = 5001;
+// Загружаем SSL/TLS-сертификаты
+const options = {
+	key: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/privkey.pem'),
+	cert: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/fullchain.pem'),
+};
 
-// Запускаем HTTP-сервер (Nginx будет проксировать запросы)
-http.createServer(app).listen(PORT, () => {
-	console.log(`✅ API сервер запущен на порту ${PORT}`);
+// Запускаем HTTPS-сервер на порту 5001
+const port = 5001;
+https.createServer(options, app).listen(port, () => {
+	console.log(`HTTPS сервер работает на порту ${port}`);
 });
