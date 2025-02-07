@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import './Catalog.css';
-import ProductList from '../ProductList/ProductList';
-import Sidebar from '../Sidebar/Sidebar';
-import SortFilter from '../SortFilter/SortFilter';
-import dataService from '../../services/dataService';
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./Catalog.css";
+import ProductList from "../ProductList/ProductList";
+import Sidebar from "../Sidebar/Sidebar";
+import SortFilter from "../SortFilter/SortFilter";
+import dataService from "../../services/dataService";
+import FilterButton from "../FilterButton/FilterButton";
+import Loader from "../Loader/Loader";
 
 const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 	const navigate = useNavigate();
@@ -19,15 +21,16 @@ const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 
 	const [selectedBrands, setSelectedBrands] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState(null);
-	const [filterPriceMin, setFilterPriceMin] = useState('');
-	const [filterPriceMax, setFilterPriceMax] = useState('');
+	const [filterPriceMin, setFilterPriceMin] = useState("");
+	const [filterPriceMax, setFilterPriceMax] = useState("");
 	const fixedPriceMin = 30;
 	const fixedPriceMax = 5000;
-	const [sortOption, setSortOption] = useState('default');
+	const [sortOption, setSortOption] = useState("default");
 
+	// Получаем категорию из URL
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
-		const categoryFromUrl = params.get('category');
+		const categoryFromUrl = params.get("category");
 		if (categoryFromUrl) {
 			setSelectedCategory(categoryFromUrl);
 		}
@@ -35,61 +38,65 @@ const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 
 	// Закрытие сайдбара при клике вне его
 	useEffect(() => {
+		if (!sidebarOpen) return; // Если сайдбар закрыт — ничего не делаем
+
 		const handleClickOutside = (event) => {
 			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
 				setSidebarOpen(false);
 			}
 		};
 
-		if (sidebarOpen) {
-			document.addEventListener('mousedown', handleClickOutside);
-		}
-
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [sidebarOpen, setSidebarOpen]);
 
+	// Получаем данные при загрузке
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const fetchedBrands = await dataService.getBrands();
-				setBrands(fetchedBrands);
+				const [fetchedBrands, fetchedCategories, products] = await Promise.all([
+					dataService.getBrands(),
+					dataService.getCategories(),
+					dataService.getProducts(),
+				]);
 
-				const fetchedCategories = await dataService.getCategories();
+				setBrands(fetchedBrands);
 				setCategories(fetchedCategories);
 
-				const products = await dataService.getProducts();
 				const grouped = products.reduce((acc, product) => {
 					const { brand, id } = product;
 					if (!acc[brand]) acc[brand] = [];
 					acc[brand].push({ ...product, key: id });
 					return acc;
 				}, {});
+
 				setProductsByBrand(grouped);
 			} catch (err) {
-				setError(err.message || 'Ошибка загрузки данных');
+				setError(err.message || "Ошибка загрузки данных");
 			} finally {
-				setLoading(false);
+				setTimeout(() => setLoading(false), 3000); // Гарантированное время анимации
 			}
 		};
+
 		fetchData();
 	}, []);
 
+	// Фильтрация и сортировка товаров
 	const filteredProducts = useMemo(() => {
-		const allProducts = Object.values(productsByBrand).flat();
+		if (!productsByBrand) return [];
+
 		let filtered = selectedBrands.length
 			? selectedBrands.flatMap((brand) => productsByBrand[brand] || [])
-			: allProducts;
+			: Object.values(productsByBrand).flat();
 
-		// Фильтр по цене
 		filtered = filtered.filter(
 			(product) =>
-				(filterPriceMin === '' || product.price >= Math.max(filterPriceMin, fixedPriceMin)) &&
-				(filterPriceMax === '' || product.price <= Math.min(filterPriceMax, fixedPriceMax))
+				(filterPriceMin === "" ||
+					product.price >= Math.max(filterPriceMin, fixedPriceMin)) &&
+				(filterPriceMax === "" ||
+					product.price <= Math.min(filterPriceMax, fixedPriceMax))
 		);
 
-		// Фильтр по категории
 		if (selectedCategory) {
 			filtered = filtered.filter((product) =>
 				Array.isArray(product.productCategory)
@@ -98,22 +105,30 @@ const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 			);
 		}
 
-		// Сортировка: сначала товары в наличии, затем пустые
 		const inStock = filtered.filter((product) => product.quantity > 0);
 		const outOfStock = filtered.filter((product) => product.quantity === 0);
 
-		// Сортировка по выбранному параметру
-		if (sortOption === 'asc-price') inStock.sort((a, b) => a.price - b.price);
-		if (sortOption === 'desc-price') inStock.sort((a, b) => b.price - a.price);
-		if (sortOption === 'asc-name') inStock.sort((a, b) => a.name.localeCompare(b.name));
-		if (sortOption === 'desc-name') inStock.sort((a, b) => b.name.localeCompare(a.name));
+		if (sortOption === "asc-price") inStock.sort((a, b) => a.price - b.price);
+		if (sortOption === "desc-price") inStock.sort((a, b) => b.price - a.price);
+		if (sortOption === "asc-name")
+			inStock.sort((a, b) => a.name.localeCompare(b.name));
+		if (sortOption === "desc-name")
+			inStock.sort((a, b) => b.name.localeCompare(a.name));
 
-		// Возвращаем товары, сначала в наличии, затем пустые
 		return [...inStock, ...outOfStock];
-	}, [selectedBrands, productsByBrand, filterPriceMin, filterPriceMax, selectedCategory, sortOption]);
+	}, [
+		selectedBrands,
+		productsByBrand,
+		filterPriceMin,
+		filterPriceMax,
+		selectedCategory,
+		sortOption,
+	]);
 
-	if (loading) return <div>Загрузка...</div>;
-	if (error) return <div style={{ color: 'red' }}>Ошибка: {error}</div>;
+	// Показываем лоадер во время загрузки
+	if (loading) return <Loader />;
+
+	if (error) return <div style={{ color: "red" }}>Ошибка: {error}</div>;
 
 	return (
 		<div className="catalog-container">
@@ -135,8 +150,17 @@ const Catalog = ({ sidebarOpen, setSidebarOpen }) => {
 				fixedPriceMax={fixedPriceMax}
 			/>
 			<div className="product-list-container">
-				<SortFilter onSortChange={setSortOption} />
-				<ProductList products={filteredProducts} onCardClick={(id) => navigate(`/products/${id}`)} />
+				<div className="product-list-header">
+					<SortFilter onSortChange={setSortOption} />
+					<FilterButton
+						sidebarOpen={sidebarOpen}
+						onFilterClick={(newState) => setSidebarOpen(newState)}
+					/>
+				</div>
+				<ProductList
+					products={filteredProducts}
+					onCardClick={(id) => navigate(`/products/${id}`)}
+				/>
 			</div>
 		</div>
 	);

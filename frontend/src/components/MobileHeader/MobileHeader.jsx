@@ -1,17 +1,23 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiShoppingCart, FiGrid } from 'react-icons/fi';
 import { useCart } from '../CartContext/CartContext'; // Подключаем глобальное состояние корзины
 import './MobileHeader.css'; // Импортируем стили для mobile-header
 
 const MobileHeader = ({ onCatalogClick }) => {
 	const navigate = useNavigate();
+	const location = useLocation(); // Получаем текущий путь
 	const { cartItemCount } = useCart(); // Подключаем счетчик товаров в корзине
 
 	const handleCatalogClick = (e) => {
 		e.preventDefault();
-		onCatalogClick(); // Переключаем сайдбар
-		navigate('/products'); // Переход в каталог
+		if (location.pathname === '/products') {
+			// Если уже на странице "Каталог", переключаем сайдбар
+			onCatalogClick();
+		} else {
+			// Иначе переходим на страницу "Каталог"
+			navigate('/products');
+		}
 	};
 
 	return (
