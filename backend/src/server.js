@@ -23,7 +23,7 @@ const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001']
 // const allowedOrigins = ["http://localhost", "http://localhost:3000"];
 
 app.options('/api/*', (req, res) => {
-	res.header('Access-Control-Allow-Origin', 'https://vashazabota.ru');
+	res.header('Access-Control-Allow-Origin', "https://vashazabota.ru");
 	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 	res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
 	res.header('Access-Control-Allow-Credentials', 'true');
@@ -65,20 +65,24 @@ app.use('/', sitemapRouter);
 
 // Эндпоинт для создания заказа
 app.post('/api/order', async (req, res) => {
+	console.log('Тело запроса:', req.body);
 	const { name, phone, address, products, total } = req.body;
 
 	if (!name || !phone || !address || !products || !total) {
-		return res.status(400).send('Пожалуйста, заполните все поля!');
+		console.error('Некорректные данные. Отсутствуют обязательные поля.');
+		return res.status(400).json({ error: 'Пожалуйста, заполните все поля!' });
 	}
 
 	try {
 		await sendOrderNotification(name, phone, address, products, total);
-		res.status(200).send('Заказ принят и уведомление отправлено.');
+		res.status(200).json({ message: 'Заказ принят и уведомление отправлено.' }); // Теперь JSON
 	} catch (error) {
 		console.error('Ошибка при отправке уведомления:', error);
-		res.status(500).send('Произошла ошибка при отправке уведомления.');
+		res.status(500).json({ error: 'Произошла ошибка при отправке уведомления.' }); // Теперь JSON
 	}
 });
+
+
 
 const port = 5001;
 

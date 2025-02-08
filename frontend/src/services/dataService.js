@@ -123,27 +123,35 @@ const fetchCategoriesFromServer = async () => {
 };
 
 // Функция для отправки заказа на сервер
-const sendOrderToServer = async (name, phone, product, address) => {
+const sendOrderToServer = async (name, phone, products, address, total) => {
 	try {
 		const apiUrl = getApiBaseUrl();
+		const orderData = { name, phone, products, address, total };
 		const response = await fetchWithTimeout(`${apiUrl}/api/order`, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ name, phone, product, address }),
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(orderData),
 		});
 
 		if (!response.ok) {
 			throw new Error(`Ошибка при отправке заказа: ${response.statusText}`);
 		}
 
-		return await response.json(); // Возвращаем ответ от сервера
+		// Проверяем, что сервер действительно вернул JSON
+		const contentType = response.headers.get('content-type');
+		if (contentType && contentType.includes('application/json')) {
+			return await response.json(); // Если JSON - обрабатываем как JSON
+		} else {
+			return { message: await response.text() }; // Если текст - обрабатываем как текст
+		}
 	} catch (error) {
 		console.error('Ошибка при отправке заказа:', error);
 		throw error;
 	}
 };
+
+
+
 
 // Обработчики для получения данных с сервера
 const getProducts = async () => {

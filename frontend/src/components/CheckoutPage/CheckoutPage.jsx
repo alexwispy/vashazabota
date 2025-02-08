@@ -3,6 +3,8 @@ import './CheckoutPage.css';
 import Notification from '../Notification/Notification';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../CartContext/CartContext';
+import dataService from '../../services/dataService';
+
 
 const CheckoutPage = () => {
 	const [cartItems, setCartItems] = useState([]);
@@ -37,37 +39,29 @@ const CheckoutPage = () => {
 			return;
 		}
 
-		try {
-			const products = cartItems.map((item) => ({
-				name: item.name,
-				quantity: item.orderQuantity,
-				price: item.price,
-			}));
+		const products = cartItems.map((item) => ({
+			name: item.name,
+			quantity: item.orderQuantity,
+			price: item.price,
+		}));
 
-			if (!pickup && deliveryFee > 0) {
-				products.push({
-					name: 'Доставка',
-					quantity: 1,
-					price: DELIVERY_FEE,
-				});
-			}
-
-			const response = await fetch(`/api/order`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name,
-					phone,
-					address: pickup ? 'Самовывоз' : address,
-					products,
-					total: pickup ? total : total + deliveryFee,
-				}),
+		if (!pickup && deliveryFee > 0) {
+			products.push({
+				name: 'Доставка',
+				quantity: 1,
+				price: DELIVERY_FEE,
 			});
+		}
 
-			if (!response.ok) {
-				throw new Error('Ошибка при отправке данных');
-			}
+		const totalAddress = pickup ? 'Самовывоз' : address;
+		const totalPrice = total + deliveryFee; // считаем итоговую сумму
 
+		const orderData = { name, phone, address: totalAddress, products, total: totalPrice };
+
+		console.log('Отправляем заказ:', JSON.stringify(orderData, null, 2)); // проверяем перед отправкой
+
+		try {
+			const response = await dataService.sendOrderToServer(name, phone, products, totalAddress, totalPrice);
 			setNotification({ message: 'Заказ успешно оформлен!', type: 'success' });
 			clearCart();
 			setCartItems([]);
@@ -77,9 +71,11 @@ const CheckoutPage = () => {
 			setAddress('');
 			setTimeout(() => navigate('/'), 60000);
 		} catch (error) {
+			console.error('Ошибка оформления заказа:', error);
 			setNotification({ message: 'Произошла ошибка при оформлении заказа. Попробуйте снова.', type: 'error' });
 		}
 	};
+
 
 	const handleCloseNotification = () => {
 		setNotification(null);
