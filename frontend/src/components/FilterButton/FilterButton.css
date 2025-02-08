@@ -67,3 +67,11 @@
 		display: none;
 	}
 }
+
+@media (max-width: 390px) {
+	.filter-button {
+		width: 250px;
+		margin-left: auto;
+		margin: 0 auto;
+	}
+}
