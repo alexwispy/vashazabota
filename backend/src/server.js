@@ -1,6 +1,6 @@
 import express from 'express';
 import https from 'https';
-// import http from 'http';
+import http from 'http';
 import fs from 'fs';
 import cors from 'cors';
 import compression from 'compression';
@@ -19,16 +19,16 @@ const app = express();
 app.use(compression());
 
 // Разрешаем CORS для фронтенда
-const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001'];
-// const allowedOrigins = ["http://localhost", "http://localhost:3000"];
+// const allowedOrigins = ['https://vashazabota.ru', 'https://vashazabota.ru:5001'];
+const allowedOrigins = ["http://localhost", "http://localhost:3000"];
 
-app.options('/api/*', (req, res) => {
-	res.header('Access-Control-Allow-Origin', "https://vashazabota.ru");
-	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-	res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-	res.header('Access-Control-Allow-Credentials', 'true');
-	res.sendStatus(204);
-});
+// app.options('/api/*', (req, res) => {
+// 	res.header('Access-Control-Allow-Origin', "https://vashazabota.ru");
+// 	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+// 	res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+// 	res.header('Access-Control-Allow-Credentials', 'true');
+// 	res.sendStatus(204);
+// });
 
 app.use(cors({
 	origin: (origin, callback) => {
@@ -88,17 +88,17 @@ const port = 5001;
 
 // Раскомитить в Production  
 // Загружаем SSL/TLS-сертификаты
-const options = {
-	key: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/privkey.pem'),
-	cert: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/fullchain.pem'),
-};
+// const options = {
+// 	key: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/privkey.pem'),
+// 	cert: fs.readFileSync('/etc/letsencrypt/live/vashazabota.ru/fullchain.pem'),
+// };
 
-https.createServer(options, app).listen(port, () => {
-	console.log(`HTTPS сервер работает на порту ${port}`);
-});
+// https.createServer(options, app).listen(port, () => {
+// 	console.log(`HTTPS сервер работает на порту ${port}`);
+// });
 
 
 // Раскомитить в Development
-// http.createServer(app).listen(port, () => {
-// 	console.log(`HTTP сервер работает на порту ${port}`);
-// });
+http.createServer(app).listen(port, () => {
+	console.log(`HTTP сервер работает на порту ${port}`);
+});

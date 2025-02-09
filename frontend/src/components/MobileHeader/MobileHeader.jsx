@@ -20,6 +20,13 @@ const MobileHeader = ({ onCatalogClick }) => {
 		}
 	};
 
+	// Функция закрытия мини-приложения
+	const handleCloseApp = () => {
+		if (window.Telegram?.WebApp) {
+			window.Telegram.WebApp.close();
+		}
+	};
+
 	return (
 		<nav className="mobile-header">
 			<button className="mobile-header-item" onClick={() => navigate('/')}>
@@ -37,6 +44,14 @@ const MobileHeader = ({ onCatalogClick }) => {
 				<span>Корзина</span>
 				{cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>} {/* Показываем счетчик */}
 			</button>
+
+			{/* Кнопка закрытия мини-приложения (показывается только в Telegram) */}
+			{window.Telegram?.WebApp && (
+				<button className="mobile-header-item close-btn" onClick={handleCloseApp}>
+					<FiX />
+					<span>Закрыть</span>
+				</button>
+			)}
 		</nav>
 	);
 };
