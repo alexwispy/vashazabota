@@ -1,0 +1,126 @@
+/* ============================
+   Уникальные стили для SortFilter
+   (основаны на .filter-button)
+============================ */
+.sort-filter {
+	position: relative;
+	min-width: 250px;
+	max-width: 50%;
+	/* Ограничиваем ширину кнопки до 50% экрана */
+	margin-left: auto;
+	cursor: pointer;
+	padding: 10px 12px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 14px;
+	color: #333;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-sizing: border-box;
+}
+
+/* Эффект при наведении */
+.sort-filter:hover {
+	background-color: #f5f5f5;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Заголовок фильтра */
+.sort-header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	font-size: 14px;
+	color: #333;
+	padding: 0;
+}
+
+/* Иконка раскрытия */
+.sort-icon {
+	font-size: 16px;
+	color: #888;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+}
+
+/* Выпадающий список вариантов */
+.sort-options {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 10;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	margin-top: 5px;
+	padding: 0;
+	list-style: none;
+	width: 100%;
+}
+
+/* Каждый вариант сортировки */
+.sort-option {
+	padding: 10px 15px;
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+/* При наведении */
+.sort-option:hover {
+	background-color: #f4f4f9;
+}
+
+/* Подсветка выбранного варианта */
+.sort-option.selected {
+	background-color: #f4f4f9;
+	font-weight: bold;
+	color: #333;
+}
+
+/* ============================
+	 Адаптивные стили
+ ============================ */
+
+/* Планшеты и небольшие экраны (до 768px) */
+@media (max-width: 768px) {
+	.sort-filter {
+		min-width: 200px;
+		/* Уменьшаем минимальную ширину на маленьких экранах */
+		font-size: 12px;
+		/* Уменьшаем размер шрифта для экономии пространства */
+		padding: 8px 10px;
+		/* Уменьшаем внутренние отступы */
+	}
+}
+
+/* Мобильные устройства (до 480px) */
+@media (max-width: 480px) {
+	.sort-filter {
+		min-width: 180px;
+		max-width: 100%;
+		font-size: 11px;
+		padding: 6px 8px;
+	}
+}
+
+/* Очень узкие экраны (до 390px) */
+@media (max-width: 390px) {
+	.sort-filter {
+		width: 250px;
+		margin-left: auto;
+		margin: 0 auto;
+	}
+}

@@ -1,0 +1,141 @@
+/* =========================
+   Основной сайдбар (Desktop)
+========================= */
+.brand-sidebar {
+	position: relative;
+	width: 100%;
+	padding: 0;
+}
+
+/* Кнопка «закрыть» по умолчанию скрыта (понадобится только в мобильной версии) */
+.sidebar-close {
+	display: none;
+	padding: 5px;
+	font-size: 18px;
+	background: none;
+	border: none;
+	color: #333;
+	cursor: pointer;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+/* Кнопки очистки и применения фильтров */
+.sidebar-clear-filters,
+.sidebar-apply-filters {
+	margin-top: 0px;
+	padding: 10px 15px;
+	background-color: #ff9900;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+	width: 100%;
+	transition: background-color 0.3s ease;
+	margin-bottom: 10px;
+}
+
+.sidebar-clear-filters:hover {
+	background-color: #e68a00;
+}
+
+/* Кнопка «Применить» (по умолчанию скрыта, появляется только на мобильных) */
+.sidebar-apply-filters {
+	display: none;
+}
+
+/* =========================
+	 Подложка (overlay),
+	 по умолчанию скрыта
+ ========================= */
+.sidebar-overlay {
+	display: none;
+	/* Показываем только на мобильном, да и то при открытом сайдбаре (через JS или класс) */
+}
+
+/* =========================
+	 Мобильная версия (до 1200px)
+ ========================= */
+@media (max-width: 1200px) {
+
+	/* Показываем кнопку «Применить» */
+	.sidebar-apply-filters {
+		display: block;
+	}
+
+	/* Сам оверлей на мобильном.
+		Можно показывать по условию, если sidebar открыт:
+		.sidebar-overlay.open { display: block; } 
+		или просто .sidebar-overlay { display: block; }
+		и выводить/скрывать в JSX React */
+	.sidebar-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1199;
+		/* Чуть ниже, чем сам сайдбар */
+		display: block;
+		/* Если хотим всегда показывать на мобильном */
+	}
+
+	/* Сайдбар «выезжает» */
+	.brand-sidebar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100vh;
+		width: 300px;
+		background-color: #fff;
+		transform: translateX(-100%);
+		z-index: 1200;
+		/* Выше оверлея */
+		transition: transform 0.3s ease-in-out;
+		overflow-y: auto;
+	}
+
+	/* Когда добавляем класс .open, сайдбар появляется */
+	.brand-sidebar.open {
+		transform: translateX(0);
+		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+	}
+
+	/* Кнопка «закрыть» в мобильной версии */
+	.sidebar-close {
+		display: block;
+	}
+
+	/* Прокрутка с учётом мобильного меню */
+	.brand-sidebar .sidebar-content {
+		padding-bottom: 60px;
+	}
+
+	/* Пример фиксации мобильного хедера */
+	.mobile-header {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background-color: #fff;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		height: 60px;
+		box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+		border-top: 1px solid #ddd;
+		z-index: 1100;
+		/* Ниже сайдбара, но выше основного контента */
+		padding: 0 10px;
+		overflow: hidden;
+	}
+
+	.sidebar-footer {
+		padding: 5px;
+	}
+}

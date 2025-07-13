@@ -1,0 +1,106 @@
+/* Шапка */
+.header {
+	position: sticky;
+	/* Шапка закреплена в верхней части экрана */
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #f4f4f9;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	/* Убедитесь, что шапка выше остального контента */
+	padding-top: constant(safe-area-inset-top, 0px);
+	/* Для старых версий iOS */
+	padding-top: env(safe-area-inset-top, 0px);
+	/* Для новых версий iOS */
+	padding-bottom: 10px;
+	/* Для общего отступа */
+	box-sizing: border-box;
+}
+
+/* Контейнер */
+.header__container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+/* Логотип */
+.header__logo {
+	white-space: nowrap;
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+	text-decoration: none;
+}
+
+/* Навигация */
+.header__nav {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+/* Ссылки */
+.header__nav-links {
+	display: flex;
+	gap: 20px;
+}
+
+.header__link {
+	font-size: 16px;
+	color: #666;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+/* Корзина */
+.header__cart {
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+/* Иконка корзины */
+.cart-icon {
+	font-size: 24px;
+	margin-right: 10px;
+}
+
+/* Убираем некоторые элементы на узких экранах */
+@media (max-width: 1200px) {
+
+	.header__link--catalog,
+	.header__cart,
+	.header__link--home {
+		display: none;
+	}
+}
+
+/* Мобильные устройства (до 768px) */
+@media (max-width: 768px) {
+	.header {
+		padding-top: calc(20px + env(safe-area-inset-top, 0px));
+		/* Учитываем безопасные зоны сверху */
+		padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+		/* Учитываем безопасные зоны снизу */
+	}
+
+	.header__container {
+		padding: 10px;
+		/* Уменьшаем отступы на мобильных устройствах */
+	}
+
+	.header__logo {
+		font-size: 20px;
+		/* Уменьшаем размер логотипа */
+	}
+
+	.header__link {
+		font-size: 14px;
+		/* Уменьшаем размер шрифта для ссылок */
+	}
+}

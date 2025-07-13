@@ -1,0 +1,51 @@
+.notification {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
+	background-color: #4caf50;
+	color: white;
+	padding: 30px 50px; /* Увеличиваем отступы */
+	border-radius: 15px; /* Более округлые углы */
+	font-size: 20px; /* Увеличиваем размер шрифта */
+	z-index: 1000;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Увеличиваем тень */
+	width: 80%;
+	max-width: 700px;
+	transition: opacity 0.5s ease-out;
+	text-align: center;
+ }
+ 
+ .notification.error {
+	background-color: #f44336; /* Красный для ошибки */
+ }
+ 
+ .notification.success {
+	background-color: #4caf50; /* Зеленый для успеха */
+ }
+ 
+ .notification-content {
+	flex: 1;
+ }
+ 
+ .notification p {
+	margin: 0;
+	font-weight: bold;
+ }
+ 
+ .close-button {
+	background: none;
+	border: none;
+	color: white;
+	font-size: 30px; /* Увеличиваем размер кнопки */
+	cursor: pointer;
+	margin-left: 20px;
+ }
+ 
+ .close-button:hover {
+	opacity: 0.7;
+ }
+ 

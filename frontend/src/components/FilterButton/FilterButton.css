@@ -1,0 +1,77 @@
+.filter-button {
+	position: relative;
+	min-width: 250px;
+	max-width: 50%;
+	/* Ограничиваем ширину кнопки до 50% экрана */
+	margin-left: auto;
+	cursor: pointer;
+	padding: 10px 12px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 14px;
+	color: #333;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-sizing: border-box;
+}
+
+.filter-button:hover {
+	background-color: #f5f5f5;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.filter-button .icon {
+	font-size: 16px;
+	color: #888;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+}
+
+.filter-button .label {
+	font-size: 14px;
+	font-weight: 500;
+	color: #333;
+}
+
+@media (max-width: 768px) {
+	.filter-button {
+
+		min-width: 200px;
+		/* Уменьшаем минимальную ширину на маленьких экранах */
+		font-size: 12px;
+		/* Уменьшаем размер шрифта для экономии пространства */
+		padding: 8px 10px;
+		/* Уменьшаем внутренние отступы */
+	}
+}
+
+@media (max-width: 480px) {
+	.filter-button {
+		min-width: 180px;
+		/* Еще меньше на самых узких экранах */
+		font-size: 11px;
+		padding: 6px 8px;
+		max-width: 100%;
+		min-width: 160px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.filter-button {
+		display: none;
+	}
+}
+
+@media (max-width: 390px) {
+	.filter-button {
+		width: 250px;
+		margin-left: auto;
+		margin: 0 auto;
+	}
+}

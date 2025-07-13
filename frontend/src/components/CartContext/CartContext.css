@@ -1,0 +1,40 @@
+.cart-count {
+	position: absolute;
+	top: -5px; /* Корректируем положение над иконкой */
+	right: 30px; /* Смещаем в сторону от края */
+	background-color: #ff9900;
+	/* Оранжевый фон */
+	color: #fff;
+	/* Белый текст */
+	font-size: 10px;
+	/* Размер текста */
+	font-weight: bold;
+	/* Жирный шрифт */
+	border-radius: 50%;
+	/* Круглая форма */
+	width: 20px;
+	/* Ширина круга */
+	height: 20px;
+	/* Высота круга */
+	display: flex;
+	/* Центрирование текста */
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	/* Легкая тень */
+	z-index: 200;
+	/* Увеличенный индекс для перекрытия */
+	border: 2px solid #fff;
+	/* Белая окантовка */
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+	.cart-count {
+		top: 1px; /* Сдвигаем внутрь иконки */
+		right: 5px; /* Подгоняем по центру внутри корзины */
+		width: 18px; /* Уменьшаем размер */
+		height: 18px;
+		font-size: 8px; /* Уменьшаем размер текста */
+	}
+}

@@ -1,0 +1,10 @@
+# Игнорировать папку node_modules
+node_modules/
+
+# Игнорировать файлы и папки, связанные с ОС
+.DS_Store         # macOS
+Thumbs.db         # Windows
+
+# Игнорировать временные файлы редакторов
+.vscode/
+.idea/

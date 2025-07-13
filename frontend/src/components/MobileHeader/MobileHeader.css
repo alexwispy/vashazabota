@@ -1,0 +1,71 @@
+.mobile-header {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: #fff;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	height: 60px;
+	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+	border-top: 1px solid #ddd;
+	z-index: 1100;
+	padding: 0 10px;
+	overflow: hidden;
+	/* Предотвращаем выход за границы */
+}
+
+.mobile-header-item {
+	background-color: #FFFFFF;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	color: #444;
+	transition: color 0.3s ease, transform 0.2s ease;
+	/* Добавляем плавное масштабирование */
+	padding: 5px;
+	position: relative;
+	max-width: 80px;
+	/* Ограничиваем ширину кнопки */
+}
+
+.mobile-header-item:hover {
+	transform: scale(1.1);
+	/* Увеличиваем всю кнопку */
+}
+
+.mobile-header-item svg {
+	font-size: 24px;
+	margin-bottom: 4px;
+	transition: transform 0.3s ease;
+}
+
+.mobile-header-item:hover svg {
+	transform: scale(1.2);
+	/* Увеличиваем только иконку */
+}
+
+@media (min-width: 1200px) {
+	.mobile-header {
+		display: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.mobile-header {
+		height: 50px;
+	}
+
+	.mobile-header-item {
+		font-size: 12px;
+	}
+
+	.mobile-header-item svg {
+		font-size: 18px;
+	}
+}

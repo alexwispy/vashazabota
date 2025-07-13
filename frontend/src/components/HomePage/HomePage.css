@@ -1,0 +1,33 @@
+/* Основной контейнер для главной страницы */
+.home-container {
+	padding: 120px 20px 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+ }
+ 
+ /* Стили для секции "Главное приветствие" */
+ .main-banner {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "Популярные категории" */
+ .categories {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "Рекомендуемые товары" */
+ .recommended-products {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "О бренде" */
+ .brand-section {
+	margin-bottom: 40px;
+ }
+ 
+ /* Стили для секции "Сезонные предложения" */
+ .seasonal-offers {
+	margin-bottom: 40px;
+ }
+ 

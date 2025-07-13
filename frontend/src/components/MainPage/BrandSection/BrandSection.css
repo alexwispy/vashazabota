@@ -1,0 +1,30 @@
+.brand-section {
+	padding: 60px 0;
+	background-color: #fff8f0;
+	text-align: center;
+ }
+ 
+ .brand-section h2 {
+	font-size: 36px;
+	margin-bottom: 20px;
+	color: #333;
+ }
+ 
+ .brand-section p {
+	font-size: 18px;
+	margin-bottom: 30px;
+	color: #666;
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+ }
+ 
+ .brand-section img {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+	border-radius: 15px;
+	max-width: 600px;
+	margin-top: 30px;
+ }
+ 

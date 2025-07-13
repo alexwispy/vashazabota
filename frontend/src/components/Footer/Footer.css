@@ -1,0 +1,125 @@
+/* Основной стиль футера */
+.footer {
+	background-color: #f4f4f9;
+	padding: 20px 15px;
+	box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
+	text-align: center;
+}
+
+/* Контейнер для контента */
+.footer__container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 15px;
+}
+
+/* Блок с контактной информацией */
+.footer__contacts {
+	margin-bottom: 15px;
+	/* Уменьшен отступ между блоками */
+}
+
+.footer__contacts p {
+	font-size: 14px;
+	color: #666;
+	margin: 4px 0;
+}
+
+.footer__contacts a {
+	color: #4f7942;
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.3s ease;
+}
+
+.footer__contacts a:hover {
+	color: #b12704;
+}
+
+/* Блок с социальными сетями */
+.footer__social {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	/* Уменьшен разрыв между иконками */
+	margin-bottom: 10px;
+	/* Уменьшен отступ снизу */
+}
+
+.footer__social a {
+	font-size: 20px;
+	color: #666;
+	transition: color 0.3s ease;
+}
+
+.footer__social a:hover {
+	color: #4f7942;
+}
+
+/* Ссылки на страницы сайта */
+.footer__links {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	/* Расстояние между ссылками для десктопной версии */
+	margin-top: 10px;
+}
+
+.footer__links a {
+	font-size: 12px;
+	color: #666;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+.footer__links a:hover {
+	color: #4f7942;
+}
+
+/* Адаптивные стили для мобильных устройств */
+
+@media (max-width: 1199px) {
+	.footer {
+		padding-bottom: 60px;
+	}
+}
+
+
+
+@media (max-width: 768px) {
+	.footer {
+		padding: 15px 10px;
+		padding-bottom: 60px;
+		/* Корректируем отступ для мобильных устройств */
+	}
+
+	.footer__contacts {
+		margin-bottom: 10px;
+		/* Уменьшен отступ для мобильных */
+	}
+
+	.footer__contacts p {
+		font-size: 12px;
+		/* Уменьшенный текст для мобильных */
+	}
+
+	.footer__social {
+		gap: 8px;
+		/* Меньше разрыв между иконками */
+	}
+
+	.footer__links {
+		display: flex;
+		flex-direction: column;
+		/* Ссылки вертикально для мобильных */
+		gap: 5px;
+		/* Меньше расстояние между ссылками */
+		align-items: center;
+		/* Центрируем ссылки */
+	}
+
+	.footer__links a {
+		text-align: center;
+	}
+}

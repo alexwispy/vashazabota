@@ -1,0 +1,44 @@
+.seasonal-offers {
+	padding: 60px 0;
+	background-color: #fff;
+	text-align: center;
+ }
+ 
+ .seasonal-offers h2 {
+	font-size: 36px;
+	margin-bottom: 40px;
+ }
+ 
+ .offer-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 30px;
+ }
+ 
+ .offer-card {
+	background-color: #fafafa;
+	padding: 25px;
+	border-radius: 12px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+ }
+ 
+ .offer-card:hover {
+	transform: translateY(-10px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .offer-card img {
+	width: 100%;
+	height: auto;
+	object-fit: contain;
+	border-radius: 8px;
+	margin-bottom: 20px;
+ }
+ 
+ .offer-card p {
+	font-size: 18px;
+	color: #333;
+	font-weight: 600;
+ }
+ 
