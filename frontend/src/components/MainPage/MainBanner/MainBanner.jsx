@@ -14,7 +14,7 @@ const MainBanner = () => {
 			<div className="main-banner__content">
 				<h1 className="main-banner__title">Скидки на косметику!</h1>
 				<p className="main-banner__subtitle">
-					Только в феврале - скидки до 30% на популярные товары.
+					До 30% — на позиции, уходящие из ассортимента
 				</p>
 				<a href="/products?category=Распродажа" className="main-banner__button">
 					Посмотреть товары
